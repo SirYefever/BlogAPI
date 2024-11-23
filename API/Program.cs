@@ -49,7 +49,8 @@ builder.Services.AddScoped<IUserStore, UserRepository>();
 builder.Services.AddTransient<ITokenGenerator, TokenService>();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Blog Api", Version = "v1" });
+    options.EnableAnnotations();
+    options.SwaggerDoc("Blog.API v1", new OpenApiInfo { Title = "Blog Api", Version = "1.0" });
     options.DocInclusionPredicate((docName, apiDesc) =>
     {
         var routeTemplate = apiDesc.RelativePath;
@@ -67,7 +68,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options => 
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.SwaggerEndpoint("/swagger/Blog.API v1/swagger.json", "Blog.API v1");
         options.RoutePrefix = string.Empty;
     });
 }

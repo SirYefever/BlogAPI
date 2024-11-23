@@ -3,12 +3,16 @@ using API.Converters;
 using Application.Dto;
 using Core.Models;
 using Core.ServiceContracts;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
 
 //TODO: remove the default "/" endpoint somehow
-public class UserController
+[ApiController]
+[ApiExplorerSettings(GroupName = "Users")]
+public class UserController: ControllerBase
 {
     private readonly IUserService _userService;
     public UserController(IUserService userService)
@@ -16,22 +20,25 @@ public class UserController
         _userService = userService;
     }
     // TODO: endpoint functions have to get Dto objects as input
+    [SwaggerOperation("Register new user")]
     [HttpPost("api/account/register")]
-    public async Task<ActionResult<TokenResponse>> Register([FromBody]UserRegisterModel model)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register([FromBody]UserRegisterModel userRegisterModel)
     {
         //Call service, do mapping, return
-        User user = UserConverters.UserRegisterModelToUser(model); 
+        User user = UserConverters.UserRegisterModelToUser(userRegisterModel); 
         _userService.CreateUser(user);
         
-        // TODO: Dedicate weather this is the way to validate property's length
-        // Validate fullName length and phoneNumberLength 
-        if (user.FullName.Length < 1 || user.PhoneNumber.Length < 1) 
-            return null; // TODO: Determine how to handle this case (need swagger to return corresponding code)
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         
         //call service
         user = await _userService.CreateUser(user);
         TokenResponse tokenResponse = new TokenResponse(user.Token);
-        return tokenResponse;
+        return Ok(tokenResponse);
     }
 
     [HttpPost("api/account/login")]

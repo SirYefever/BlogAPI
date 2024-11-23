@@ -5,9 +5,9 @@ namespace API.Dto;
 
 public class LoginCredentials
 {
-    [MinLength(1)]
+    [Required]
     [EmailAddress]
     public string Email { get; set; }
-    [MinLength(1)]
+    [Required]
     public string Password { get; set; }
 }

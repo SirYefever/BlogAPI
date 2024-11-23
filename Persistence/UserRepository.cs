@@ -16,7 +16,6 @@ public class UserRepository: IUserStore
     {
         //TODO: figure out weather db validation is supposed to be here
         
-        // TODO: Dedicate weather this is the way to validate property's length
         // Validate fullName length and phoneNumberLength 
         
         bool registrationAllowed = !_context.Users.Any(user => user.Email == user.Email);//TODO: figure out weather this is db validation or not
