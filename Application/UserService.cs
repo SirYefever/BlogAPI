@@ -38,11 +38,11 @@ public class UserService : IUserService
         //TODO: figure out how to handle exception form userRepository
         try
         {
-            _userStore.GetByEmail(user.Email);
+            await _userStore.GetByEmail(user.Email);
         }
-        catch//TODO: figure out how to handle this case (maybe change the way UserRepository behaves)
+        catch(NullReferenceException)//TODO: figure out how to handle this case (maybe change the way UserRepository behaves)
         {
-            throw;
+            await _userStore.Add(user);
         }
 
         return user;

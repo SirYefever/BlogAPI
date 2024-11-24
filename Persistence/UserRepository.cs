@@ -22,6 +22,7 @@ public class UserRepository: IUserStore
         if (!registrationAllowed)
         {
             //TODO: throw exception... but in which way?
+            throw new ("Registration with there credentials is not allowed.");
         }
         _context.Users.Add(user);
         await _context.SaveChangesAsync();

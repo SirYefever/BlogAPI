@@ -1,10 +1,14 @@
 using System.Text.Json.Serialization;
 using API;
+using API.Converters;
 using Persistence;
 using Application;
+using Application.Auth;
 using Core.InterfaceContracts;
 using Core.ServiceContracts;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using WebApplication = Microsoft.AspNetCore.Builder.WebApplication;
 
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +51,10 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<MainDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserStore, UserRepository>();
-builder.Services.AddTransient<ITokenGenerator, TokenService>();
+builder.Services.AddTransient<ITokenGenerator, TokenService>();//TODO: figure out weather I still need this.
+builder.Services.AddTransient<IJwtProvider, JwtProvider>();
+builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<UserConverters>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
 builder.Services.AddSwaggerGen(options =>
@@ -62,7 +69,7 @@ builder.Services.AddSwaggerGen(options =>
         return true;
     });
 });
-
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtSettings"));
 
 var app = builder.Build();
 

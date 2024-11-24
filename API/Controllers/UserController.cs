@@ -1,10 +1,12 @@
 using API.Dto;
 using API.Converters;
 using Application.Dto;
+using Application.Auth;
 using Core.Models;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,9 +19,11 @@ public class UserController: ControllerBase
 {
     private readonly IUserService _userService;
     private readonly UserConverters _userConverters;
-    public UserController(IUserService userService, UserConverters userConverters)
+    private readonly IPasswordHasher _passwordHasher;
+    public UserController(IUserService userService, IPasswordHasher passwordHasher, UserConverters userConverters)
     {
         _userService = userService;
+        _passwordHasher = passwordHasher;
         _userConverters = userConverters;
     }
     // TODO: endpoint functions have to get Dto objects as input
@@ -30,15 +34,13 @@ public class UserController: ControllerBase
     public async Task<IActionResult> Register([FromBody]UserRegisterModel userRegisterModel)
     {
         //Call service, do mapping, return
-        User user = _userConverters.UserRegisterModelToUser(userRegisterModel); 
-        _userService.CreateUser(user);
+        var user = _userConverters.UserRegisterModelToUser(userRegisterModel); 
         
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
         
-        //call service
         user = await _userService.CreateUser(user);
         TokenResponse tokenResponse = new TokenResponse(user.Token);
         return Ok(tokenResponse);

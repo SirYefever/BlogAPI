@@ -1,4 +1,7 @@
+using System.Security.Cryptography;
+using BCrypt.Net;
 using Application.Auth;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure;
 
@@ -12,6 +15,9 @@ public class PasswordHasher : IPasswordHasher
 
     public bool Verify(string password, string hashedPassword)
     {
-        return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        return BCrypt.Net.BCrypt.EnhancedVerify(
+            text: password,
+            hash: hashedPassword
+            );
     }
 }
