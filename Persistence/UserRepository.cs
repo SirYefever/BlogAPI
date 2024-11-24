@@ -18,12 +18,10 @@ public class UserRepository: IUserStore
         
         // Validate fullName length and phoneNumberLength 
         
-        bool registrationAllowed = !_context.Users.Any(user => user.Email == user.Email);//TODO: figure out weather this is db validation or not
+        bool registrationAllowed = !_context.Users.Any(item => item.Email == user.Email);//TODO: figure out weather this is db validation or not
         if (!registrationAllowed)
         {
-            // TODO: Determine how to handle this case (the idea is to return 409 here or maybe write a
-            // custom error handler that will throw "This email is already taken")
-            return null;
+            //TODO: throw exception... but in which way?
         }
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
@@ -35,15 +33,27 @@ public class UserRepository: IUserStore
         throw new NotImplementedException();
     }
 
-    public User GetByCreds(string email, string password)//TODO: figure out weather this has to be Task<User> or not
+    //TODO: figure out weather this function is needed or not.
+    // public User GetByCreds(string email, string password)//TODO: figure out weather this has to be Task<User> or not
+    // {
+    //     //find item with corresponding email, check passwords for match
+    //     var user = _context.Users.First(user => user.Email == email);// TODO: figure out weather we need to catch exception here
+    //     if (user.Password == password)
+    //     {
+    //         return user;
+    //     }
+    //     // TODO: Determine how to handle this case 
+    //     return null;
+    // }
+
+    public async Task<User> GetByEmail(string email)
     {
-        //find item with corresponding email, check passwords for match
-        var user = _context.Users.First(user => user.Email == email);// TODO: figure out weather we need to catch exception here
-        if (user.Password == password)
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
+        if (user == null)
         {
-            return user;
+            //TODO: figure out how to handle this case
+            throw new NullReferenceException("User not found");
         }
-        // TODO: Determine how to handle this case 
-        return null;
+        return user;
     }
 }

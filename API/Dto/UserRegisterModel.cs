@@ -25,7 +25,7 @@ public class UserRegisterModel: IValidatableObject
         var phoneRegex = @"\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}";
         List<ValidationResult> results = new List<ValidationResult>();
 
-        if (BirthDate <= DateTime.Now)
+        if (BirthDate >= DateTime.Now)
         {
             results.Add(new ValidationResult("Birthdate is invalid", new[] { nameof(BirthDate) }));
         }
@@ -38,3 +38,4 @@ public class UserRegisterModel: IValidatableObject
         return results;
     }
 }
+//TODO: password validation: requires at least one digit

@@ -1,10 +1,19 @@
 using API.Dto;
+using Application.Auth;
 using Core.Models;
+using Infrastructure;
 
 namespace API.Converters;
 
 public class UserConverters
 {
+    private readonly IPasswordHasher _passwordHasher;
+
+    public UserConverters(IPasswordHasher passwordHasher)
+    {
+        _passwordHasher = passwordHasher;
+    }
+
     public User UserDtoToUser(UserDto dto)
     {
         //TODO: Dedicate what to do with password property
@@ -17,12 +26,13 @@ public class UserConverters
         return user;
     }
 
-    public static User UserRegisterModelToUser(UserRegisterModel model)
+    public User UserRegisterModelToUser(UserRegisterModel model)
     {
         var user = new User();
+        var hashedPassword = _passwordHasher.Generate(model.Password);
         user.FullName = model.FullName;
         user.Email = model.Email;
-        user.Password = model.Password;
+        user.HashedPassword = hashedPassword;
         user.BirthDate = model.BirthDate;
         user.Gender = model.Gender;
         user.PhoneNumber = model.PhoneNumber;
@@ -52,17 +62,6 @@ public class UserConverters
         return userDto;
     }
 
-    public UserRegisterModel UserToUserRegisterModel(User user)
-    {
-        var model = new UserRegisterModel();
-        model.FullName = user.FullName;
-        model.Email = user.Email;
-        model.Password = user.Password;
-        model.BirthDate = user.BirthDate;
-        model.Gender = user.Gender;
-        model.PhoneNumber = user.PhoneNumber;
-        return model;
-    }
 
     public UserRegisterModel UserDtoToUserRegisterModelDto(UserDto dto)
     {

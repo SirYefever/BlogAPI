@@ -4,6 +4,7 @@ using Persistence;
 using Application;
 using Core.InterfaceContracts;
 using Core.ServiceContracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WebApplication = Microsoft.AspNetCore.Builder.WebApplication;
 
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,8 @@ builder.Services.AddDbContext<MainDbContext>(options => options.UseNpgsql(connec
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserStore, UserRepository>();
 builder.Services.AddTransient<ITokenGenerator, TokenService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
