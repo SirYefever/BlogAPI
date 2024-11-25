@@ -4,7 +4,6 @@ namespace Core.ServiceContracts;
 
 public interface IUserService
 {
-   //TODO: implement 
    Task<User> GetUserById(Guid userId); 
    Task<User> CreateUser(User user); 
    Task<User> UpdateUser(User userToBeUpdated, User updatedUser); 

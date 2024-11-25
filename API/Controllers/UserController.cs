@@ -15,6 +15,7 @@ namespace API.Controllers;
 //TODO: remove the default "/" endpoint somehow
 [ApiController]
 [ApiExplorerSettings(GroupName = "Users")]
+[Authorize]
 public class UserController: ControllerBase
 {
     private readonly IUserService _userService;
@@ -27,10 +28,12 @@ public class UserController: ControllerBase
         _userConverters = userConverters;
     }
     // TODO: endpoint functions have to get Dto objects as input
+    [AllowAnonymous]
     [SwaggerOperation("Register new user")]
     [HttpPost("api/account/register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody]UserRegisterModel userRegisterModel)
     {
         //Call service, do mapping, return
@@ -46,9 +49,11 @@ public class UserController: ControllerBase
         return Ok(tokenResponse);
     }
 
+    [AllowAnonymous]
     [SwaggerOperation("Log into the system")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost("api/account/login")]
     public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginCredentials creds)
     {
