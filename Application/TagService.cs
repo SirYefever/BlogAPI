@@ -18,9 +18,10 @@ public class TagService: ITagService
         throw new NotImplementedException();
     }
 
-    public Task<Tag> GetTagById(Guid id)
+    public async Task<Tag> GetTagById(Guid id)
     {
-        throw new NotImplementedException();
+        var tag = await _tagRepository.GetById(id);
+        return tag;
     }
 
     public Task<Tag> CreateTag(string name)
@@ -28,12 +29,19 @@ public class TagService: ITagService
         throw new NotImplementedException();
     }
 
-    public await Task<Tag> ProcessTag(string name)
+    public async Task<Tag> ProcessTag(string name)
     {
-        var tag = _tagRepository.GetByName(name);
+        var tag = await _tagRepository.GetByName(name);
+        Tag newTag;
         if (tag == null)
         {
-            //create new tag
-            _tagRepository.Add();
+            //TODO: figure out weather it's needed to create new Tag instance here
+            newTag = new Tag();
+            newTag.Name = name;
+            newTag.CreateTime = DateTime.Now;
+            await _tagRepository.Add(newTag);
+            return newTag;
         }
+        return tag;
+    }
 }

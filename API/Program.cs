@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using API;
+using API.Controllers;
 using API.Converters;
 using Persistence;
 using Application;
@@ -54,7 +55,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ITokenGenerator, TokenService>();//TODO: figure out weather I still need this.
 builder.Services.AddTransient<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<ITagRepository, TagRepository>();
+builder.Services.AddTransient<IPostRepository, PostRepository>();
+builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<UserConverters>();
+builder.Services.AddTransient<TagConverters>();
+builder.Services.AddTransient<PostConverters>();
 
 //TODO: remove padlock icons for [AllowAnonymous] methods
 builder.Services.AddSwaggerGen(options =>
@@ -75,7 +82,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTkzNWRhZC03YWU4LTdiNjEtYjQzMC01Y2E5NjIzNGZkZjQiLCJleHAiOjE3MzI1NDQ3NDZ9.sGlihWp0iTf1ucMKIc-Bg9l2PW3S_kwPujQ82bvrWNU\"",
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {

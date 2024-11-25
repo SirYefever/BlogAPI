@@ -6,6 +6,13 @@ namespace API.Converters;
 
 public class PostConverters
 {
+    private readonly TagConverters _tagConverters;
+
+    public PostConverters(TagConverters tagConverters)
+    {
+        _tagConverters = tagConverters;
+    }
+
     public static Post PostDtoToPost(PostDto dto)
     {
         var post = new Post();
@@ -50,7 +57,7 @@ public class PostConverters
         return dto;
     }
     
-    public static Post CreatePostDtoToPost(CreatePostDto dto)
+    public async Task<Post> CreatePostDtoToPost(CreatePostDto dto)
     {
         var post = new Post();
         post.Title = dto.Title;
@@ -58,7 +65,7 @@ public class PostConverters
         post.ReadingTime = dto.ReadingTime;
         post.Image  = dto.Image;
         post.AdressId = dto.AddressId;
-        post.Tags = TagConverters.TagDtoListToTagList(dto.Tags);
+        post.Tags = await _tagConverters.TagGuidListToTagList(dto.Tags);
         return post;
     }
 }

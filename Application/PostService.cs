@@ -1,3 +1,4 @@
+using Core.InterfaceContracts;
 using Core.Models;
 using Core.ServiceContracts;
 
@@ -5,14 +6,21 @@ namespace Application;
 
 public class PostService: IPostService
 {
+    private readonly IPostRepository _postRepository;
+    public PostService(IPostRepository postRepository)
+    {
+        _postRepository = postRepository;
+    }
+
     public Task<Post[]> GetAvailabePosts()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Post> CreatePost(Post post)
+    public async Task<Post> CreatePost(Post post)
     {
-        throw new NotImplementedException();
+        var createdPost = await _postRepository.Add(post);
+        return createdPost;
     }
 
     public Task<Post> GetPostById(Guid id)

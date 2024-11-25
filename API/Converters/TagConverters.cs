@@ -1,10 +1,19 @@
 using API.Dto;
 using Core.Models;
+using Core.ServiceContracts;
 
 namespace API.Controllers;
 
 public class TagConverters
 {
+    
+    private readonly ITagService _tagService;
+
+    public TagConverters(ITagService tagService)
+    {
+        _tagService = tagService;
+    }
+
     public static TagDto TagToTagDto(Tag tag)
     {
         var tagDto = new TagDto();
@@ -28,17 +37,28 @@ public class TagConverters
     {
         var tag = new Tag();
         tag.Id = dto.Id;
-        tag.Name = dto.Name;
         tag.CreateTime = dto.CreateTime;
+        tag.Name = dto.Name;
+        
         return tag;
     }
+
+    public static List<Tag> TagDtoListToTagList(List<TagDto> dtoList)
+    {
+       var tagList = new List<Tag>();
+       foreach (var dto in dtoList)
+       {
+           tagList.Add(TagDtoToTag(dto));
+       }
+       return tagList;
+    }
     
-    public static List<Tag> TagDtoListToTagList(List<TagDto> dtos)
+    public async Task<List<Tag>> TagGuidListToTagList(List<Guid> dtoList)
     {
         var tagList = new List<Tag>();
-        foreach (var el in dtos)
+        foreach (var id in dtoList)
         {
-            tagList.Add(TagDtoToTag(el));
+            tagList.Add(await _tagService.GetTagById(id));
         }
         return tagList;
     }
