@@ -12,6 +12,7 @@ public partial class MainDbContext: DbContext
     }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Post> Posts { get; set; }
+    public virtual DbSet<Tag> Tags { get; set; }
     
     //TODO: figure out what this function does
     // protected override void OnModelCreating(ModelBuilder modelBuilder)
