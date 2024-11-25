@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.InterfaceContracts;
 
-public interface IUserStore
+public interface IUserRepository
 {
     Task<User> Add(User user);
     Task<User> GetById(Guid id);

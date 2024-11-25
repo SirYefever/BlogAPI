@@ -1,35 +1,20 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+namespace Core.Models;
 
-namespace API.Dto;
-
-public class PostDto
+public class Post
 {
-    
-    [Required]
     public Guid Id { get; set; }
-    [Required]
     public DateTime CreateTime { get; set; }
-    [Required] 
     public string Title { get; set; }
-    [Required]
     public string Description { get; set; }
-    [Required]
     public int ReadingTime { get; set; }
-    public Uri Image { get; set; }
-    [Required]
+    public Uri? Image { get; set; }
     public Guid AuthorId { get; set; }
-    [Required]
-    public string? Author { get; set; }
+    public string Author { get; set; }
     public Guid? CommunityId { get; set; }
     public string? CommunityName { get; set; }
     public Guid? AdressId { get; set; }
-    [Required]
-    [DefaultValue(0)]
     public int Likes { get; set; }
-    [Required]
     public bool HasLike { get => Likes > 0; }
-    [Required]
     public int CommentsCount { get; set; }
-    public List<TagDto>? Tags { get; set; } 
+    public List<Tag>? Tags { get; set; }
 }

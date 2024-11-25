@@ -20,5 +20,5 @@ public class CreatePostDto
     public Uri? Image { get; set; }
     public Guid? AddressId { get; set; }
     [Required]
-    public Tag[] Tags { get; set; }
+    public List<Guid> Tags { get; set; }
 }

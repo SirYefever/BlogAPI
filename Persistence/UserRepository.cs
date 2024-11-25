@@ -5,7 +5,7 @@ using Persistence;
 
 namespace Persistence;
 
-public class UserRepository: IUserStore
+public class UserRepository: IUserRepository
 {
     private readonly MainDbContext _context; 
     public UserRepository(MainDbContext context)
@@ -24,6 +24,7 @@ public class UserRepository: IUserStore
             //TODO: throw exception... but in which way?
             throw new ("Registration with there credentials is not allowed.");
         }
+        //TODO: figure out weather next to lines have to be wraped with try catch
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return user;

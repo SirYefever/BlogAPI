@@ -9,14 +9,14 @@ namespace Application;
 
 public class UserService : IUserService
 {
-    private readonly IUserStore _userStore;
+    private readonly IUserRepository _userRepository;
     private readonly ITokenGenerator _tokenGenerator;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtProvider _jwtProvider;
 
-    public UserService(IUserStore userStore, ITokenGenerator tokenGenerator, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
+    public UserService(IUserRepository userRepository, ITokenGenerator tokenGenerator, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
     {
-        _userStore = userStore;
+        _userRepository = userRepository;
         _tokenGenerator = tokenGenerator;
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
@@ -38,11 +38,11 @@ public class UserService : IUserService
         //TODO: figure out how to handle exception form userRepository
         try
         {
-            await _userStore.GetByEmail(user.Email);
+            await _userRepository.GetByEmail(user.Email);
         }
         catch(NullReferenceException)//TODO: figure out how to handle this case (maybe change the way UserRepository behaves)
         {
-            await _userStore.Add(user);
+            await _userRepository.Add(user);
         }
 
         return user;
@@ -60,7 +60,7 @@ public class UserService : IUserService
     //TODO: Is there supposed to be async here?
     public async Task<string> Login(string email, string password)
     {
-        var user = await _userStore.GetByEmail(email);
+        var user = await _userRepository.GetByEmail(email);
         var authenticationAllowed = _passwordHasher.Verify(password, user.HashedPassword);
         if (!authenticationAllowed)
         {

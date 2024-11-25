@@ -28,9 +28,9 @@ public class UserController: ControllerBase
         _userConverters = userConverters;
     }
     // TODO: endpoint functions have to get Dto objects as input
-    [AllowAnonymous]
     [SwaggerOperation("Register new user")]
     [HttpPost("api/account/register")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

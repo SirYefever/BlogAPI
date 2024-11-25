@@ -50,7 +50,7 @@ var configuration = new ConfigurationBuilder()
 builder.Services.AddControllers();
 builder.Services.AddDbContext<MainDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserStore, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ITokenGenerator, TokenService>();//TODO: figure out weather I still need this.
 builder.Services.AddTransient<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
