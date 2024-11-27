@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;
 using API.Dto;
@@ -31,7 +32,6 @@ public class PostController : ControllerBase
 
     [SwaggerOperation("Create a personal user post")]
     [HttpPost("api/post")]
-    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -44,12 +44,19 @@ public class PostController : ControllerBase
         return Ok(post.Id);
     }
 
+    [SwaggerOperation("Get a list of available posts")]
     [HttpGet("api/post")]
     [GetPosts]
-    public async Task<IActionResult> GetPostList(PostListRequest request)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetPostList([FromQuery]PostListRequest request)//TODO: figure out why Tags are displayed differently in swagger.
     {
-        throw new NotImplementedException();
+        Console.WriteLine("User Id: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
         _postService.GetAvailabePosts(request);
+        return Ok();
     }
 
 }

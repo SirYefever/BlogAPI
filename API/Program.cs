@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Persistence.Persistence;
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -61,9 +62,12 @@ builder.Services.AddTransient<ITagRepository, TagRepository>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<ITagService, TagService>();
+builder.Services.AddTransient<ICommunityService, CommunityService>();
+builder.Services.AddTransient<ICommunityRepository, CommunityRepository>();
 builder.Services.AddTransient<UserConverters>();
 builder.Services.AddTransient<TagConverters>();
 builder.Services.AddTransient<PostConverters>();
+builder.Services.AddTransient<CommunityConverters>();
 
 //TODO: remove padlock icons for [AllowAnonymous] methods
 builder.Services.AddSwaggerGen(options =>

@@ -12,7 +12,7 @@ public class UserConverters
     {
         _passwordHasher = passwordHasher;
     }
-public User UserDtoToUser(UserDto dto)
+    public User UserDtoToUser(UserDto dto)
     {
         //TODO: Dedicate what to do with password property
         var user = new User();
