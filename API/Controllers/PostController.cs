@@ -2,6 +2,7 @@ using Core.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;
 using API.Dto;
 using API.Converters;
+using API.Filters;
 using Application.Dto;
 using Application.Auth;
 using Core.Models;
@@ -43,10 +44,12 @@ public class PostController : ControllerBase
         return Ok(post.Id);
     }
 
-    public async Task<IActionResult> GetPostList(PostListRequest)
+    [HttpGet("api/post")]
+    [GetPosts]
+    public async Task<IActionResult> GetPostList(PostListRequest request)
     {
-        await _postService.
-        
+        throw new NotImplementedException();
+        _postService.GetAvailabePosts(request);
     }
 
 }

@@ -13,13 +13,10 @@ public class PostService: IPostService
         _postRepository = postRepository;
     }
 
-    public Task<List<Post>> GetAvailabePosts(PostListRequest request)
+    public List<Post> GetAvailabePosts(PostListRequest request)
     {
-        var postList = _postRepository.GetAvailabePosts();
-        foreach (var el in postList)
-        {
-            if (el.)
-        }
+        var posts =  _postRepository.GetAvailabePosts(request);
+        return posts;
     }
 
     public async Task<Post> CreatePost(Post post)
