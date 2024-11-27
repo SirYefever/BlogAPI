@@ -1,3 +1,4 @@
+using API.Dto;
 using Core.InterfaceContracts;
 using Core.Models;
 
@@ -20,6 +21,17 @@ public class PostRepository: IPostRepository
     public Task<Post> Get(Guid id)
     {
         throw new NotImplementedException();
+    }
+
+    public List<Post> GetAvailabePosts()//TODO: figure out if it's OK that there are no 'await's here.
+    {
+        List<Post> result = new List<Post>();
+        foreach (var post in _context.Posts)
+        {
+            result.Add(post);
+        }
+
+        return result;
     }
 
     public Task AddLike(Guid postId, Guid userId)

@@ -1,3 +1,4 @@
+using API.Dto;
 using Core.InterfaceContracts;
 using Core.Models;
 using Core.ServiceContracts;
@@ -12,9 +13,13 @@ public class PostService: IPostService
         _postRepository = postRepository;
     }
 
-    public Task<Post[]> GetAvailabePosts()
+    public Task<List<Post>> GetAvailabePosts(PostListRequest request)
     {
-        throw new NotImplementedException();
+        var postList = _postRepository.GetAvailabePosts();
+        foreach (var el in postList)
+        {
+            if (el.)
+        }
     }
 
     public async Task<Post> CreatePost(Post post)

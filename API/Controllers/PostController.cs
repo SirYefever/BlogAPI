@@ -17,7 +17,7 @@ namespace API.Controllers;
 [ApiController]
 [ApiExplorerSettings(GroupName = "Users")]
 [Authorize]
-public class PostController: ControllerBase
+public class PostController : ControllerBase
 {
     private readonly IPostService _postService;
     private readonly PostConverters _postConverters;
@@ -36,10 +36,17 @@ public class PostController: ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostDto createPostDto)
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
     {
         var post = await _postConverters.CreatePostDtoToPost(createPostDto);
-        await _postService.CreatePost(post);   
+        await _postService.CreatePost(post);
         return Ok(post.Id);
     }
+
+    public async Task<IActionResult> GetPostList(PostListRequest)
+    {
+        await _postService.
+        
+    }
+
 }
