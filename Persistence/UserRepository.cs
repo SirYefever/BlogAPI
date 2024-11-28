@@ -58,4 +58,18 @@ public class UserRepository: IUserRepository
         }
         return user;
     }
+
+    public async Task<string> GetTokenByEmail(string email)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
+        return user.Token;
+    }
+
+    public async Task<User> Update(User userToUpdate, User newUser)
+    {
+        var user = _context.Users.FirstOrDefault(user => user.Id == userToUpdate.Id);
+        _context.Entry(user).CurrentValues.SetValues(newUser);
+        await _context.SaveChangesAsync();
+        return user;
+    }
 }

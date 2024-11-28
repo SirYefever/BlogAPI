@@ -17,7 +17,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace API.Controllers;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "Users")]
+[ApiExplorerSettings(GroupName = "Posts")]
 [Authorize]
 public class PostController : ControllerBase
 {
@@ -40,6 +40,9 @@ public class PostController : ControllerBase
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
     {
         var post = await _postConverters.CreatePostDtoToPost(createPostDto);
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value, out curUserId);
+        post.AuthorId = curUserId;
         await _postService.CreatePost(post);
         return Ok(post.Id);
     }

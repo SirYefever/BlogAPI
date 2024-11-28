@@ -10,7 +10,7 @@ public class CommunityConverters
         var community = new Community();
         community.Name = dto.Name;
         community.Description = dto.Description;
-        community.CreateTime = DateTime.Now;
+        community.CreateTime = DateTime.UtcNow;
         community.IsClosed = dto.IsClosed;
         return community;
     }
@@ -34,10 +34,6 @@ public class CommunityConverters
         dto.Description = community.Description;
         dto.IsClosed = community.IsClosed;
         dto.SubscribersCount = community.SubscribersCount;
-        foreach (var subscriber in community.Subscribers)
-        {
-            dto.Administrators.Add(UserConverters.UserToUserDto(subscriber));
-        }
         return dto;
     }
 }

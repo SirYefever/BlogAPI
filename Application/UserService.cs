@@ -59,7 +59,7 @@ public class UserService : IUserService
     }
     //TODO: Is there supposed to be async here?
     public async Task<string> Login(string email, string password)
-    {
+    {//TODO: figure out weather this is the place where all this logic is supposed to be in.
         var user = await _userRepository.GetByEmail(email);
         var authenticationAllowed = _passwordHasher.Verify(password, user.HashedPassword);
         if (!authenticationAllowed)
@@ -68,6 +68,10 @@ public class UserService : IUserService
         }
 
         var token = _jwtProvider.GenerateToken(user);
+        var newUserData = user;
+        newUserData.Token = token;
+        await _userRepository.Update(user, newUserData);
+        
         return token;
     }
 }

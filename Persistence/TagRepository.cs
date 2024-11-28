@@ -14,6 +14,9 @@ public class TagRepository: ITagRepository
     
     public async Task<Tag> Add(Tag tag)
     {
+        _context.Tags.FirstOrDefaultAsync(c => c.Name == tag.Name);
+        if (tag != null)
+            throw new ArgumentException($"Tag {tag.Name} already exists");
         _context.Tags.Add(tag);
         await _context.SaveChangesAsync();
         return tag;
@@ -29,5 +32,10 @@ public class TagRepository: ITagRepository
     {
         var tag = await _context.Tags.FirstOrDefaultAsync(x => x.Name == name);
         return tag;
+    }
+
+    public async Task<List<Tag>> GetAll()
+    {
+        return await _context.Tags.ToListAsync();
     }
 }

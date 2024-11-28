@@ -1,5 +1,6 @@
 using API.Converters;
 using API.Dto;
+using Core.InterfaceContracts;
 using Core.Models;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,14 @@ namespace API.Controllers;
 public class CommunityController: ControllerBase
 {
     private readonly ICommunityService _communityService;
-    
+    private readonly IUserCommunityService _userCommunityService;
+
+    public CommunityController(ICommunityService communityService, IUserCommunityService userCommunityService)
+    {
+        _communityService = communityService;
+        _userCommunityService = userCommunityService;
+    }
+
     [SwaggerOperation("Create new community")]
     [HttpPost("api/community/create")]
     [ProducesResponseType(StatusCodes.Status200OK)] //TODO: figure out which responses are possible here
@@ -41,7 +49,6 @@ public class CommunityController: ControllerBase
     
     [SwaggerOperation("Get information about community")]
     [HttpGet("api/community/{id}")]
-    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -49,5 +56,19 @@ public class CommunityController: ControllerBase
     {
         var communityDto = CommunityConverters.CommunityToCommunityDto(await _communityService.GetCommunityById(id));
         return Ok(communityDto);
+    }
+
+    [SwaggerOperation("Subscribe a user to the community")]
+    [HttpPost("api/community/{id}/subscribe")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Subscribe(Guid communityId)
+    {
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value, out userId);
+        await _userCommunityService.SubscribeUserToCommunityAsync(userId, communityId);
+        return Ok();
     }
 }

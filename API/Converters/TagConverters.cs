@@ -62,4 +62,13 @@ public class TagConverters
         }
         return tagList;
     }
+
+    public static Tag CreateTagDtoToTag(CreateTagDto dto)
+    {
+        var tag = new Tag();
+        tag.Id = Guid.NewGuid();
+        tag.CreateTime = DateTime.UtcNow;
+        tag.Name = dto.Name;
+        return tag;
+    }
 }

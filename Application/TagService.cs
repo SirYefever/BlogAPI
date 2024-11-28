@@ -24,9 +24,23 @@ public class TagService: ITagService
         return tag;
     }
 
-    public Task<Tag> CreateTag(string name)
+    public async Task<Tag> CreateTag(Tag tag)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _tagRepository.Add(tag);
+        }
+        catch
+        {
+            throw;
+        }
+        return tag;
+    }
+
+    public async Task<List<Tag>> GetAllTags()
+    {
+        var tags = await _tagRepository.GetAll();
+        return tags;
     }
 
     public async Task<Tag> ProcessTag(string name)
@@ -38,7 +52,7 @@ public class TagService: ITagService
             //TODO: figure out weather it's needed to create new Tag instance here
             newTag = new Tag();
             newTag.Name = name;
-            newTag.CreateTime = DateTime.Now;
+            newTag.CreateTime = DateTime.UtcNow;
             await _tagRepository.Add(newTag);
             return newTag;
         }
