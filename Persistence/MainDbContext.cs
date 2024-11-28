@@ -15,6 +15,7 @@ public partial class MainDbContext: DbContext
     public virtual DbSet<Tag> Tags { get; set; }
     public virtual DbSet<Community> Communities { get; set; }
     public virtual DbSet<UserCommunity> UserCommunity { get; set; }
+    public virtual DbSet<PostTag> PostTag { get; set; }
     
     //TODO: figure out what this function does
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,6 +26,9 @@ public partial class MainDbContext: DbContext
         // OnModelCreatingPartial(modelBuilder);
         modelBuilder.Entity<UserCommunity>()
             .HasKey(uc => new { uc.UserId, uc.CommunityId });        
+        
+        modelBuilder.Entity<PostTag>()
+            .HasKey(pt => new { pt.PostId, pt.TagId });        
     }
     // partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

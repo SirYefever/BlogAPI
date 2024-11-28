@@ -31,7 +31,6 @@ public class PostConverters
         post.AuthorId = dto.AuthorId;
         post.Author = dto.Author;
         post.CommentsCount = dto.CommentsCount;
-        post.Tags = TagConverters.TagDtoListToTagList(dto.Tags);
         return post;
     }
     
@@ -53,7 +52,6 @@ public class PostConverters
         dto.AuthorId = post.AuthorId;
         dto.Author = post.Author;
         dto.CommentsCount = post.CommentsCount;
-        dto.Tags = TagConverters.TagListToTagDtoList(post.Tags);    
         return dto;
     }
     
@@ -65,7 +63,6 @@ public class PostConverters
         post.ReadingTime = dto.ReadingTime;
         post.Image  = dto.Image;
         post.AdressId = dto.AddressId;
-        post.Tags = await _tagConverters.TagGuidListToTagList(dto.Tags);
         return post;
     }
 }

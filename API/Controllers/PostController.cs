@@ -41,8 +41,9 @@ public class PostController : ControllerBase
     {
         var post = await _postConverters.CreatePostDtoToPost(createPostDto);
         var curUserId = Guid.Empty;
-        Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value, out curUserId);
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         post.AuthorId = curUserId;
+        
         await _postService.CreatePost(post);
         return Ok(post.Id);
     }

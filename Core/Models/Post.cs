@@ -20,5 +20,4 @@ public class Post
     public int Likes { get; set; }
     public bool HasLike { get => Likes > 0; }
     public int CommentsCount { get; set; }
-    public List<Tag>? Tags { get; set; }
 }

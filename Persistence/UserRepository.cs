@@ -30,9 +30,9 @@ public class UserRepository: IUserRepository
         return user;
     }
 
-    public Task<User> GetById(Guid id)
+    public async Task<User> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
     }
 
     //TODO: figure out weather this function is needed or not.

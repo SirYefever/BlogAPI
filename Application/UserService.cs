@@ -25,9 +25,10 @@ public class UserService : IUserService
     // validation(that's not related to DB(whatever that means)) TODO: delete this comment
 
 
-    public Task<User> GetUserById(Guid userId)
+    public async Task<User> GetUserById(Guid userId)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetById(userId);
+        return user;
     }
 
     public async Task<User> CreateUser(User user)// Todo: figure out weather this needs to return user or token

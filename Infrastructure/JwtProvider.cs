@@ -20,7 +20,7 @@ public class JwtProvider : IJwtProvider
 
     public string GenerateToken(User user)
     {
-        Claim[] claims = [new ("userId" , user.Id.ToString())];
+        Claim[] claims = [new (ClaimTypes.NameIdentifier , user.Id.ToString()), new (ClaimTypes.Name, user.FullName)];
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.SecretKey)),
             SecurityAlgorithms.HmacSha256Signature);
@@ -28,7 +28,7 @@ public class JwtProvider : IJwtProvider
         var token = new JwtSecurityToken(
             claims: claims,
             signingCredentials: signingCredentials,
-            expires: DateTime.UtcNow.AddHours(_options.ExpiresHours)
+            expires: DateTime.UtcNow.AddMinutes(_options.ExpirationInMinutes)
         );
         var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
         return tokenValue;
