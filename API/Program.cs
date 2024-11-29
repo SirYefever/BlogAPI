@@ -64,10 +64,13 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<ICommunityService, CommunityService>();
 builder.Services.AddTransient<ICommunityRepository, CommunityRepository>();
+builder.Services.AddTransient<IUserCommunityService, UserCommunityService>();
+builder.Services.AddTransient<IUserCommunityRepository, UserCommunityRepository>();
 builder.Services.AddTransient<UserConverters>();
 builder.Services.AddTransient<TagConverters>();
 builder.Services.AddTransient<PostConverters>();
 builder.Services.AddTransient<CommunityConverters>();
+builder.Services.AddTransient<UserCommunityConverters>();
 
 //TODO: remove padlock icons for [AllowAnonymous] methods
 builder.Services.AddSwaggerGen(options =>

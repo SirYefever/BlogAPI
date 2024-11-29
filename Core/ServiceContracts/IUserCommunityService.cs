@@ -1,7 +1,10 @@
+using Core.Models;
+
 namespace Core.ServiceContracts;
 
 public interface IUserCommunityService
 {
-    public Task SubscribeUserToCommunityAsync(Guid userId, Guid communityId);
-    public Task UnsubscribeUserToCommunityAsync(Guid userId, Guid communityId);
+    public Task AddUserToTheCommunity(Guid communityId, Guid userId, CommunityRole communityRole);
+    public Task UnsubscribeUserToCommunityAsync(Guid communityId, Guid userId);
+    public  Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId);
 }

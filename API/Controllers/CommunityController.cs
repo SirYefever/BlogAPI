@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Converters;
 using API.Dto;
 using Core.InterfaceContracts;
@@ -33,6 +34,9 @@ public class CommunityController: ControllerBase
     {
         var community = CommunityConverters.CreateCommunityDtoToCommunity(createCommunityDto);
         community = await _communityService.CreateCommunityAsync(community);
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value, out userId);
+        await _userCommunityService.AddUserToTheCommunity(community.Id, userId, CommunityRole.Administrator);
         return Ok(community);
     }
 
@@ -64,11 +68,44 @@ public class CommunityController: ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Subscribe(Guid communityId)
+    public async Task<IActionResult> Subscribe(Guid id)
     {
         var userId = Guid.Empty;
         Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value, out userId);
-        await _userCommunityService.SubscribeUserToCommunityAsync(userId, communityId);
+        await _userCommunityService.AddUserToTheCommunity(userId, id, CommunityRole.Subscriber);
         return Ok();
+    }
+    [SwaggerOperation("Unsubscribe a user from the community")]
+    [HttpDelete("api/community/{id}/unsubscribe")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Unsubscribe(Guid id)
+    {
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value, out userId);
+        await _userCommunityService.UnsubscribeUserToCommunityAsync(userId, id);
+        return Ok();
+    }
+
+    [SwaggerOperation("Get user's community list (with the greatest user's role in the community)")]
+    [HttpGet("api/community/my")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetCommunitiesUserBelongsTo()
+    {
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        var userCommunityList = await _userCommunityService.GetUserCommunitiesByUserIdAsync(userId);
+        var communityUserDtoList = new List<CommunityUserDto>();
+        foreach (var uc in userCommunityList)
+        {
+            communityUserDtoList.Add(UserCommunityConverters.UserCommunityToCommunityUserDto(uc));
+        }
+        return Ok(communityUserDtoList);
     }
 }

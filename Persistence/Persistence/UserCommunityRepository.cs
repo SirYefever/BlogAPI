@@ -1,5 +1,6 @@
 using Core.InterfaceContracts;
 using Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Persistence;
 
@@ -24,9 +25,20 @@ public class UserCommunityRepository: IUserCommunityRepository
         throw new NotImplementedException();
     }
 
-    public Task<List<Community>> GetCommunitiesOfUserAsync(Guid userId)
+    public async Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var userCommunityList = await _context.UserCommunity
+            .Where(uc => uc.UserId == userId)
+            .ToListAsync();
+        return userCommunityList;
+    }
+
+    public async Task DeleteByIds(Guid communityId, Guid userId)
+    {
+        var userCommunityToDelete = await _context.UserCommunity.FirstAsync(uc =>
+            uc.UserId == userId && uc.CommunityId == communityId);
+        _context.UserCommunity.Remove(userCommunityToDelete);
+        await _context.SaveChangesAsync();
     }
 
     public Task<List<User>> GetCommunitySubscribersAsync(Guid communityId)

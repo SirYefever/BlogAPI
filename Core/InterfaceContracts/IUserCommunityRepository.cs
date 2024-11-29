@@ -6,6 +6,6 @@ public interface IUserCommunityRepository
 {
     Task<UserCommunity> CreateAsync(UserCommunity userCommunity);
     Task<List<Community>> GetAllAsync();
-    Task<List<Community>> GetCommunitiesOfUserAsync(Guid userId);
-    Task<List<User>> GetCommunitySubscribersAsync(Guid communityId);
+    Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId);
+    Task DeleteByIds(Guid communityId, Guid userId);
 }
