@@ -36,6 +36,7 @@ public class UserService : IUserService
         // Console logging is supposed to be here
         var token = _tokenGenerator.GenerateToken(user.Email);
         user.Token = token;
+        user.CreateTime = DateTime.UtcNow;
         //TODO: figure out how to handle exception form userRepository
         try
         {

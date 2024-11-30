@@ -6,6 +6,7 @@ public class User
 {
      //TODO: Dedicate weather we need attributes here
      public Guid Id { get; set; }
+     public DateTime CreateTime { get; set; }
      public string Token { get; set; }
      public string FullName { get; set; }
      public string HashedPassword { get; set; }

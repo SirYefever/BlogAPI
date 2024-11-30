@@ -11,5 +11,5 @@ public class AuthorDto
     public Gender Gender { get; set; }
     public int? Posts { get; set; }
     public int? Likes { get; set; }
-    public DateTime? CreateTime { get; set; }
+    public DateTime? Created { get; set; }
 }

@@ -66,6 +66,8 @@ builder.Services.AddTransient<ICommunityService, CommunityService>();
 builder.Services.AddTransient<ICommunityRepository, CommunityRepository>();
 builder.Services.AddTransient<IUserCommunityService, UserCommunityService>();
 builder.Services.AddTransient<IUserCommunityRepository, UserCommunityRepository>();
+builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
+builder.Services.AddTransient<IAuthorService, AuthorService>();
 builder.Services.AddTransient<UserConverters>();
 builder.Services.AddTransient<TagConverters>();
 builder.Services.AddTransient<PostConverters>();
