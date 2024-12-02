@@ -8,4 +8,5 @@ public interface IUserCommunityRepository
     Task<List<Community>> GetAllAsync();
     Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId);
     Task DeleteByIds(Guid communityId, Guid userId);
+    public Task<int> GetSubscriberCountById(Guid communityId);
 }

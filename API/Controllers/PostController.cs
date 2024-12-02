@@ -43,7 +43,6 @@ public class PostController : ControllerBase
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         post.AuthorId = curUserId;
-        
         await _postService.CreatePost(post);
         return Ok(post.Id);
     }
@@ -58,8 +57,9 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetPostList([FromQuery]PostListRequest request)//TODO: figure out why Tags are displayed differently in swagger.
     {
-        Console.WriteLine("User Id: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
-        _postService.GetAvailabePosts(request);
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
+        _postService.GetAvailabePosts(request, curUserId);
         return Ok();
     }
 

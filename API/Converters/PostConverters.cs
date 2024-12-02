@@ -63,6 +63,7 @@ public class PostConverters
         post.ReadingTime = dto.ReadingTime;
         post.Image  = dto.Image;
         post.AdressId = dto.AddressId;
+        post.CommunityId = dto.CommunityId;
         return post;
     }
 }

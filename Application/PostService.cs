@@ -9,26 +9,38 @@ public class PostService: IPostService
 {
     private readonly IPostRepository _postRepository;
     private readonly IUserRepository _userRepository;
-    public PostService(IPostRepository postRepository, IUserRepository userRepository)
+    private readonly IUserCommunityRepository _userCommunityRepository;
+    private readonly ICommunityPostRepository _communityPostRepository;
+    public PostService(IPostRepository postRepository, IUserRepository userRepository, IUserCommunityRepository userCommunityRepository, ICommunityPostRepository communityPostRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
+        _userCommunityRepository = userCommunityRepository;
+        _communityPostRepository = communityPostRepository;
     }
 
-    public List<Post> GetAvailabePosts(PostListRequest request)
+    public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId)
     {
-        var posts =  _postRepository.GetAvailabePosts(request);
+        List<UserCommunity> curUserCommunities = null;
+        if (request.OnlyMyCommunities)
+        {
+            curUserCommunities = await _userCommunityRepository.GetUserCommunitiesByUserIdAsync(userId);
+        }
+        var posts =  await _postRepository.GetAvailabePosts(request, userId, curUserCommunities);
         return posts;
     }
 
     public async Task<Post> CreatePost(Post post)
     {
-        var postCreator = await _userRepository.GetById(post.AuthorId);//TODO: figure out weather services are
-            //supposed to reference not corresponding repositories(IUserRepository) directly or do they need to
-            //reference service (IUserService)?
+        var postCreator = await _userRepository.GetById(post.AuthorId);
         post.Author = postCreator.FullName;
-        var createdPost = await _postRepository.Add(post);
-        return createdPost;
+        await _postRepository.Add(post);
+        if (post.CommunityId.HasValue)
+        {
+            var communityPost = new CommunityPost((Guid)post.CommunityId, post.Id);
+            await _communityPostRepository.CreateAsync(communityPost);
+        }
+        return post;
     }
 
     public Task<Post> GetPostById(Guid id)

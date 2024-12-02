@@ -7,7 +7,7 @@ public interface IPostRepository
 {
     Task<Post> Add(Post post);
     Task<Post> Get(Guid id);
-    List<Post> GetAvailabePosts(PostListRequest request);
+    Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId, List<UserCommunity> curUserCommunities);
     Task AddLike(Guid postId, Guid userId);
     Task RemoveLike(Guid postId, Guid userId);
 }

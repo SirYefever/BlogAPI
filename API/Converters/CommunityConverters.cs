@@ -22,7 +22,7 @@ public class CommunityConverters
         communityDto.Name = community.Name;
         communityDto.Description = community.Description;
         communityDto.IsClosed = community.IsClosed;
-        communityDto.SubscribersCount = community.SubscribersCount;
+        // communityDto.SubscribersCount = community.SubscribersCount;
         return communityDto;
     }
     
@@ -33,7 +33,7 @@ public class CommunityConverters
         dto.Name = community.Name;
         dto.Description = community.Description;
         dto.IsClosed = community.IsClosed;
-        dto.SubscribersCount = community.SubscribersCount;
+        // dto.SubscribersCount = community.SubscribersCount;
         return dto;
     }
 }

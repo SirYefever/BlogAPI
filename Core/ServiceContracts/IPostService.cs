@@ -5,7 +5,7 @@ namespace Core.ServiceContracts;
 
 public interface IPostService
 {
-    public List<Post> GetAvailabePosts(PostListRequest request);
+    public Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId);
     public Task<Post> CreatePost(Post post);
     public Task<Post> GetPostById(Guid id);
     public Task LikePost(Guid postId);//TODO: figure out weather we need UserId for this

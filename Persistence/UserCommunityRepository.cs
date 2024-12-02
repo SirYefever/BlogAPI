@@ -2,7 +2,7 @@ using Core.InterfaceContracts;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence.Persistence;
+namespace Persistence;
 
 public class UserCommunityRepository: IUserCommunityRepository
 {
@@ -44,5 +44,11 @@ public class UserCommunityRepository: IUserCommunityRepository
     public Task<List<User>> GetCommunitySubscribersAsync(Guid communityId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<int> GetSubscriberCountById(Guid communityId)
+    {
+        var result = await _context.UserCommunity.CountAsync(x => x.CommunityId == communityId);
+        return result;
     }
 }

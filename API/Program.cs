@@ -18,7 +18,6 @@ using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Persistence;
-using Persistence.Persistence;
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -68,6 +67,9 @@ builder.Services.AddTransient<IUserCommunityService, UserCommunityService>();
 builder.Services.AddTransient<IUserCommunityRepository, UserCommunityRepository>();
 builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
 builder.Services.AddTransient<IAuthorService, AuthorService>();
+builder.Services.AddTransient<IPostTagRepository, PostTagRepository>();
+builder.Services.AddTransient<IPostTagService, PostTagService>();
+builder.Services.AddTransient<ICommunityPostRepository, CommunityPostRepository>();
 builder.Services.AddTransient<UserConverters>();
 builder.Services.AddTransient<TagConverters>();
 builder.Services.AddTransient<PostConverters>();

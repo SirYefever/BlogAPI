@@ -1,3 +1,4 @@
+using API.Dto;
 using Core.Models;
 
 namespace Core.InterfaceContracts;
@@ -9,4 +10,5 @@ public interface ICommunityRepository
     Task<List<Community>> GetAll();
     Task<Community> UpdateById(Guid id, Community newCommunity);
     Task DeleteById(Guid id);
+    Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request);
 }

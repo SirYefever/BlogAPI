@@ -25,10 +25,19 @@ public class PostRepository: IPostRepository
     {
         throw new NotImplementedException();
     }
+    
 
-    public List<Post> GetAvailabePosts(PostListRequest request)
+    public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId, List<UserCommunity> curUserCommunities = null)
     {//TODO: figure out why nothing is awaitable here
+        
         var posts = _context.Posts.AsQueryable();
+        
+        if (request.OnlyMyCommunities)
+        {
+            // check weather each post.communityId is contained in cuUserCommunities
+            var availableCommunities = curUserCommunities.Select(uc => uc.CommunityId).ToList();
+            posts = posts.Where(p => p.CommunityId != null && availableCommunities.Contains((Guid)p.CommunityId));
+        }
 
         if (!string.IsNullOrWhiteSpace(request.PartOfAuthorName))
         {
@@ -65,11 +74,6 @@ public class PostRepository: IPostRepository
             }
         }
 
-        // if (request.OnlyMyCommunities)//TODO: finish this after implementing communities.
-        // {
-        //     posts = posts.Where(p => p.OnlyMyCommunities);
-        // }
-
         if (request.PageSize.HasValue)
         {
             posts = posts.Take(request.PageSize.Value);
@@ -82,6 +86,11 @@ public class PostRepository: IPostRepository
 
         return posts.ToList();
     }
+
+    // public List<Post> GetAvailabePostsOnlyMyCommunities(PostListRequest request, Guid userId)
+    // {
+    //     
+    // }
 
     public Task AddLike(Guid postId, Guid userId)
     {
