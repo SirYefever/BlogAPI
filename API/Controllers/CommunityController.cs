@@ -18,11 +18,13 @@ public class CommunityController: ControllerBase
 {
     private readonly ICommunityService _communityService;
     private readonly IUserCommunityService _userCommunityService;
+    private readonly IPostService _postService;
 
-    public CommunityController(ICommunityService communityService, IUserCommunityService userCommunityService)
+    public CommunityController(ICommunityService communityService, IUserCommunityService userCommunityService, IPostService postService)
     {
         _communityService = communityService;
         _userCommunityService = userCommunityService;
+        _postService = postService;
     }
 
     [SwaggerOperation("Get community list")]
@@ -87,6 +89,24 @@ public class CommunityController: ControllerBase
         request.PageSize = pageSize;
         var posts = await _communityService.GetPostsOfCommunity(request);
         return Ok(posts);
+    }
+    
+    [SwaggerOperation("Create a post in the specified community")]
+    [HttpPost("api/community/{id}/post")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreatePost(Guid id, [FromBody] CreatePostDto createPostDto)
+    {
+        var post = PostConverters.CreatePostDtoToPost(createPostDto, id);
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
+        post.AuthorId = curUserId;
+        await _postService.CreatePost(post);
+        return Ok(post.Id);
     }
 
     [SwaggerOperation("Subscribe a user to the community")]

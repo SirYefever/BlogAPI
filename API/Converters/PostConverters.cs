@@ -55,7 +55,7 @@ public class PostConverters
         return dto;
     }
     
-    public async Task<Post> CreatePostDtoToPost(CreatePostDto dto)
+    public static Post CreatePostDtoToPost(CreatePostDto dto, Guid communityId)
     {
         var post = new Post();
         post.Title = dto.Title;
@@ -63,7 +63,7 @@ public class PostConverters
         post.ReadingTime = dto.ReadingTime;
         post.Image  = dto.Image;
         post.AdressId = dto.AddressId;
-        post.CommunityId = dto.CommunityId;
+        post.CommunityId = communityId;
         return post;
     }
 }

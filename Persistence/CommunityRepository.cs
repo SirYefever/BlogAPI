@@ -53,11 +53,10 @@ public class CommunityRepository: ICommunityRepository
         
         if (!string.IsNullOrWhiteSpace(request.CommunityId.ToString()))
         {
-            posts = posts.Where(p => p.Author.Contains(request.CommunityId.ToString()));
+            posts = posts.Where(p => p.CommunityId == request.CommunityId);
         }
 
-        if (!request.TagGuids.IsNullOrEmpty())
-        {
+        if (request.TagGuids != null && request.TagGuids.Any())        {
             var postTags = _context.PostTag.AsQueryable();
             var postTagsFiltered = postTags.Where(pt => request.TagGuids.Contains(pt.TagId));
             var availablePostIds = postTagsFiltered.Select(pt => pt.PostId).ToList();

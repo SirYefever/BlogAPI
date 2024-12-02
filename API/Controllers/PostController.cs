@@ -39,7 +39,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
     {
-        var post = await _postConverters.CreatePostDtoToPost(createPostDto);
+        var post = PostConverters.CreatePostDtoToPost(createPostDto, Guid.Empty);
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         post.AuthorId = curUserId;

@@ -15,7 +15,6 @@ public class CreatePostDto
     [MinLength(5)]
     public string Description { get; set; }
     
-    public Guid? CommunityId { get; set; }
     [Required]
     public int ReadingTime { get; set; }
     [MaxLength(1000)]
