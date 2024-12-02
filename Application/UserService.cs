@@ -34,7 +34,7 @@ public class UserService : IUserService
     public async Task<User> CreateUser(User user)// Todo: figure out weather this needs to return user or token
     {
         // Console logging is supposed to be here
-        var token = _tokenGenerator.GenerateToken(user.Email);
+        var token = _jwtProvider.GenerateToken(user);
         user.Token = token;
         user.CreateTime = DateTime.UtcNow;
         //TODO: figure out how to handle exception form userRepository

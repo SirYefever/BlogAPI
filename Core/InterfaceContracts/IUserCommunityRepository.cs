@@ -9,4 +9,5 @@ public interface IUserCommunityRepository
     Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId);
     Task DeleteByIds(Guid communityId, Guid userId);
     public Task<int> GetSubscriberCountById(Guid communityId);
+    public Task<CommunityRole> GetHighestRoleOfUserInCommunity(Guid communityId, Guid userId);
 }

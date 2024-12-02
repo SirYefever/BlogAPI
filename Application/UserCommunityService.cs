@@ -24,6 +24,19 @@ public class UserCommunityService: IUserCommunityService
         await _userCommunityRepository.DeleteByIds(communityId, userId);
     }
 
+    public async Task<CommunityRole> GetHighestRoleOfUserInCommunity(Guid communityId, Guid userId)
+    {
+        try
+        {
+            var role = await _userCommunityRepository.GetHighestRoleOfUserInCommunity(communityId, userId);
+            return role;
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
     public async Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId)
     {
         var userCommunityList = await _userCommunityRepository.GetUserCommunitiesByUserIdAsync(userId);

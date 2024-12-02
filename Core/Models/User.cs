@@ -4,6 +4,10 @@ namespace Core.Models;
 
 public class User
 {
+     public User()
+     {
+          Id = Guid.NewGuid();
+     }
      //TODO: Dedicate weather we need attributes here
      public Guid Id { get; set; }
      public DateTime CreateTime { get; set; }

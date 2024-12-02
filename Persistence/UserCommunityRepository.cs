@@ -51,4 +51,18 @@ public class UserCommunityRepository: IUserCommunityRepository
         var result = await _context.UserCommunity.CountAsync(x => x.CommunityId == communityId);
         return result;
     }
+
+    public async Task<CommunityRole> GetHighestRoleOfUserInCommunity(Guid communityId, Guid userId)
+    {
+        try
+        {
+            var userCommunity =
+                await _context.UserCommunity.FirstAsync(uc => uc.UserId == userId && uc.CommunityId == communityId);
+            return userCommunity.HighestRole;
+        }
+        catch
+        {
+            throw new NullReferenceException("UserCommunity not found");
+        }
+    }
 }

@@ -108,6 +108,28 @@ public class CommunityController: ControllerBase
         await _postService.CreatePost(post);
         return Ok(post.Id);
     }
+    
+    [SwaggerOperation("Get the greatest user's role in the community (or null if the user is not a member of " +
+                      "the community)")]
+    [HttpGet("api/community/{id}/role")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetRoleByCommunityIdAsync(Guid id)
+    {
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        try
+        {
+            var role = await _userCommunityService.GetHighestRoleOfUserInCommunity(id, userId);
+            return Ok(role);
+        }
+        catch
+        {
+            return new JsonResult(null);
+        }
+    }
 
     [SwaggerOperation("Subscribe a user to the community")]
     [HttpPost("api/community/{id}/subscribe")]
