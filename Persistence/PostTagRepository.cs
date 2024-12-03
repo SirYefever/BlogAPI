@@ -1,5 +1,6 @@
 using Core.InterfaceContracts;
 using Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
@@ -19,9 +20,11 @@ public class PostTagRepository: IPostTagRepository
         return postTag;
     }
 
-    public Task<PostTag> GetAllAsync(Guid id)
+    public async Task<List<PostTag>> GetByPostId(Guid postId)
     {
-        throw new NotImplementedException();
+        var postTags = _context.PostTag.AsQueryable();
+        postTags = postTags.Where(x => x.PostId == postId);
+        return await postTags.ToListAsync();
     }
 
     public Task<PostTag> GetTagsOfPost(Guid postId)

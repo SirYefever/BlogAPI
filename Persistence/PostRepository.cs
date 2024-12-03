@@ -21,9 +21,10 @@ public class PostRepository: IPostRepository
         return post;
     }
 
-    public Task<Post> Get(Guid id)
+    public async Task<Post> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        var post = await _context.Posts.FirstAsync(post => post.Id == id);
+        return post;
     }
     
 

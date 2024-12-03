@@ -1,5 +1,6 @@
 using API.Controllers;
 using API.Dto;
+using Core.InterfaceContracts;
 using Core.Models;
 
 namespace API.Converters;
@@ -7,10 +8,18 @@ namespace API.Converters;
 public class PostConverters
 {
     private readonly TagConverters _tagConverters;
+    private readonly IPostCommentRepository _postCommentRepository;
+    private readonly IPostTagRepository _postTagRepository;
+    private readonly ICommentRepository _commentRepository;
+    private readonly ITagRepository _tagRepository;
 
-    public PostConverters(TagConverters tagConverters)
+    public PostConverters(TagConverters tagConverters, IPostCommentRepository postCommentRepository, IPostTagRepository postTagRepository, ICommentRepository commentRepository, ITagRepository tagRepository)
     {
         _tagConverters = tagConverters;
+        _postCommentRepository = postCommentRepository;
+        _postTagRepository = postTagRepository;
+        _commentRepository = commentRepository;
+        _tagRepository = tagRepository;
     }
 
     public static Post PostDtoToPost(PostDto dto)
@@ -65,5 +74,34 @@ public class PostConverters
         post.AdressId = dto.AddressId;
         post.CommunityId = communityId;
         return post;
+    }
+
+    public async Task<PostFullDto> PostToPostFullDto(Post post)
+    {
+        var dto = new PostFullDto();
+        dto.Id = post.Id;
+        dto.Title = post.Title;
+        dto.Description = post.Description;
+        dto.CreateTime = post.CreateTime;
+        dto.ReadingTime = post.ReadingTime;
+        dto.Image = post.Image;
+        dto.Author = post.Author;
+        dto.AuthorId = post.AuthorId;
+        dto.CommunityId = post.CommunityId;
+        dto.CommunityName = post.CommunityName;
+        dto.AdressId = post.AdressId;
+        dto.CommentsCount = post.CommentsCount;
+        
+        var postComments = await _postCommentRepository.GetByPostId(post.Id);
+        var commentIds = postComments.Select(pc => pc.CommentId).ToList();
+        var comments = await _commentRepository.GetByIdsAsync(commentIds);
+        dto.Comments = comments;
+        
+        var postTags = await _postTagRepository.GetByPostId(post.Id);
+        var tagIds = postTags.Select(pt => pt.TagId).ToList();
+        var tags = await _tagRepository.GetByIdsAsync(tagIds);
+        var tagDtos = tags.Select(tag => TagConverters.TagToTagDto(tag)).ToList();
+        dto.Tags = tagDtos;
+        return dto;
     }
 }

@@ -43,9 +43,10 @@ public class PostService: IPostService
         return post;
     }
 
-    public Task<Post> GetPostById(Guid id)
+    public async Task<Post> GetPostById(Guid id)
     {
-        throw new NotImplementedException();
+        var post = await _postRepository.GetById(id);
+        return post;
     }
 
     public Task LikePost(Guid postId)

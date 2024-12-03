@@ -28,6 +28,11 @@ public class TagRepository: ITagRepository
         return tag;
     }
 
+    public async Task<List<Tag>> GetByIdsAsync(List<Guid> id)
+    {
+        return await _context.Tags.Where(x => id.Contains(x.Id)).ToListAsync();
+    }
+
     public async Task<Tag> GetByName(string name)
     {
         var tag = await _context.Tags.FirstOrDefaultAsync(x => x.Name == name);

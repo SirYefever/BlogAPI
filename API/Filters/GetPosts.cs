@@ -6,7 +6,7 @@ public class GetPosts: Attribute, IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {
-        throw new NotImplementedException();
+        var test = 1;
     }
 
     public void OnActionExecuted(ActionExecutedContext context)

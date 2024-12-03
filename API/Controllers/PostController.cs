@@ -30,6 +30,23 @@ public class PostController : ControllerBase
         _postConverters = postConverters;
     }
 
+
+    [SwaggerOperation("Get a list of available posts")]
+    [HttpGet("api/post")]
+    // [GetPosts]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetPostList([FromQuery]PostListRequest request)//TODO: figure out why Tags are displayed differently in swagger.
+    {
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
+        var posts = await _postService.GetAvailabePosts(request, curUserId);
+        return Ok(posts);
+    }
+
     [SwaggerOperation("Create a personal user post")]
     [HttpPost("api/post")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -46,21 +63,17 @@ public class PostController : ControllerBase
         await _postService.CreatePost(post);
         return Ok(post.Id);
     }
-
-    [SwaggerOperation("Get a list of available posts")]
-    [HttpGet("api/post")]
-    [GetPosts]
+    
+    [SwaggerOperation("Get information about concrete post")]
+    [HttpGet("api/post/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetPostList([FromQuery]PostListRequest request)//TODO: figure out why Tags are displayed differently in swagger.
+    public async Task<IActionResult> GetInformationByIdAsync(Guid id)
     {
-        var curUserId = Guid.Empty;
-        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
-        _postService.GetAvailabePosts(request, curUserId);
-        return Ok();
+        var post = await _postService.GetPostById(id);
+        var postFullDto = await _postConverters.PostToPostFullDto(post);
+        return Ok(postFullDto);
     }
-
 }
