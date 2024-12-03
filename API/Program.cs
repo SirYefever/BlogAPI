@@ -69,7 +69,6 @@ builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
 builder.Services.AddTransient<IAuthorService, AuthorService>();
 builder.Services.AddTransient<IPostTagRepository, PostTagRepository>();
 builder.Services.AddTransient<IPostTagService, PostTagService>();
-builder.Services.AddTransient<IPostCommentRepository, PostCommentRepository>();
 builder.Services.AddTransient<ICommentRepository, CommentRepository>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddTransient<ICommunityPostRepository, CommunityPostRepository>();

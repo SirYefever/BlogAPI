@@ -17,8 +17,8 @@ public class CommentRepository: ICommentRepository
 
     public async Task<Comment> AddAsync(Guid postId, Comment comment)
     {
-        _context.Comment.Add(comment);
-        _context.PostComment.Add(new PostComment(postId, comment.Id));
+        comment.postId = postId;
+        await _context.Comment.AddAsync(comment);
         await _context.SaveChangesAsync();
         return comment;
     }
@@ -54,5 +54,21 @@ public class CommentRepository: ICommentRepository
         comment.Content = newContent;
         comment.ModifiedDate = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid commentId)
+    {
+        var comment = await _context.Comment.FirstAsync(c => c.Id == commentId); 
+        comment.Content = "";
+        comment.ModifiedDate = DateTime.UtcNow;
+        comment.DeleteDate = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Comment>> GetCommentsByPostId(Guid postId)
+    {
+        var comments = _context.Comment.AsQueryable();
+        comments = comments.Where(c => c.postId == postId);
+        return await comments.ToListAsync();
     }
 }

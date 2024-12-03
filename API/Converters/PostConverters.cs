@@ -8,15 +8,13 @@ namespace API.Converters;
 public class PostConverters
 {
     private readonly TagConverters _tagConverters;
-    private readonly IPostCommentRepository _postCommentRepository;
     private readonly IPostTagRepository _postTagRepository;
     private readonly ICommentRepository _commentRepository;
     private readonly ITagRepository _tagRepository;
 
-    public PostConverters(TagConverters tagConverters, IPostCommentRepository postCommentRepository, IPostTagRepository postTagRepository, ICommentRepository commentRepository, ITagRepository tagRepository)
+    public PostConverters(TagConverters tagConverters, IPostTagRepository postTagRepository, ICommentRepository commentRepository, ITagRepository tagRepository)
     {
         _tagConverters = tagConverters;
-        _postCommentRepository = postCommentRepository;
         _postTagRepository = postTagRepository;
         _commentRepository = commentRepository;
         _tagRepository = tagRepository;
@@ -92,9 +90,7 @@ public class PostConverters
         dto.AdressId = post.AdressId;
         dto.CommentsCount = post.CommentsCount;
         
-        var postComments = await _postCommentRepository.GetByPostId(post.Id);
-        var commentIds = postComments.Select(pc => pc.CommentId).ToList();
-        var comments = await _commentRepository.GetByIdsAsync(commentIds);
+        var comments = await _commentRepository.GetCommentsByPostId(post.Id);
         dto.Comments = comments;
         
         var postTags = await _postTagRepository.GetByPostId(post.Id);
