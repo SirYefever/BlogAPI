@@ -45,7 +45,7 @@ public class PostController : ControllerBase
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         var posts = await _postService.GetAvailabePosts(request, curUserId);
         return Ok(posts);
-    }
+   }
 
     [SwaggerOperation("Create a personal user post")]
     [HttpPost("api/post")]

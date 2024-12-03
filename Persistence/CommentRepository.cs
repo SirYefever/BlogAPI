@@ -15,9 +15,10 @@ public class CommentRepository: ICommentRepository
         _context = context;
     }
 
-    public async Task<Comment> AddAsync(Comment comment)
+    public async Task<Comment> AddAsync(Guid postId, Comment comment)
     {
         _context.Comment.Add(comment);
+        _context.PostComment.Add(new PostComment(postId, comment.Id));
         await _context.SaveChangesAsync();
         return comment;
     }
@@ -32,5 +33,12 @@ public class CommentRepository: ICommentRepository
     {
         var comments = await _context.Comment.Where(c => ids.Contains(c.Id)).ToListAsync();
         return comments;
+    }
+
+    public async Task IncrementSubCommentsCount(Guid commentId)
+    {
+        var comment = await _context.Comment.FirstAsync(c => c.Id == commentId);
+        comment.SubComments++;
+        await _context.SaveChangesAsync();
     }
 }
