@@ -16,6 +16,17 @@ public class CommentController: ControllerBase
         _commentService = commentService;
     }
 
+    [SwaggerOperation("Get all nested comments(replies)")]
+    [HttpGet("api/comment/{id}/tree")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetReplies(Guid id)
+    {
+        var replies = await _commentService.GetReplies(id);
+        return Ok(replies);
+    }
 
     [SwaggerOperation("Add a comment to a concrete post")]
     [HttpPost("api/post/{id}/comment")] //TODO: figure out why is it /post, instead of /comment

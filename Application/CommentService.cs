@@ -37,4 +37,10 @@ public class CommentService: ICommentService
     {
         throw new NotImplementedException();
     }
+
+    public async Task<List<Comment>> GetReplies(Guid commentId)
+    {
+        var replies = await _commentRepository.GetRepliesByIdAsync(commentId);
+        return replies;
+    }
 }

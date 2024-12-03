@@ -8,4 +8,5 @@ public interface ICommentService
     Task<Comment> UpdateCommentAsync(Guid oldCommentId, Comment newComment);
     Task DeleteCommentAsync(Guid commentId);
     Task<Comment> GetCommentAsync(Guid commentId);
+    Task<List<Comment>> GetReplies(Guid commentId);
 }

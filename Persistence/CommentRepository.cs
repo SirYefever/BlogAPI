@@ -41,4 +41,10 @@ public class CommentRepository: ICommentRepository
         comment.SubComments++;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Comment>> GetRepliesByIdAsync(Guid commentId)
+    {
+        var replies = await _context.Comment.Where(c => c.ParentId == commentId).ToListAsync();
+        return replies;
+    }
 }
