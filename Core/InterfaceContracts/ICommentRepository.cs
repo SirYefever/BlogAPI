@@ -9,4 +9,5 @@ public interface ICommentRepository
     public Task<List<Comment>> GetByIdsAsync(List<Guid> ids);
     public Task IncrementSubCommentsCount(Guid commentId);
     public Task<List<Comment>> GetRepliesByIdAsync(Guid commentId);
+    Task UpdateAsync(Guid commentId, string newContent);
 }

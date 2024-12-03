@@ -3,6 +3,7 @@ using API.Converters;
 using API.Dto;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
@@ -46,6 +47,18 @@ public class CommentController: ControllerBase
         comment.CreateTime = DateTime.UtcNow;
         
         await _commentService.CreateCommentAsync(id, comment);
+        return Ok();
+    }
+
+    [SwaggerOperation("Edit concrete comment")]
+    [HttpPut("api/comment/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> EditByIdAsync(Guid id, string content)
+    {
+        await _commentService.UpdateCommentAsync(id, content);
         return Ok();
     }
 }

@@ -47,4 +47,12 @@ public class CommentRepository: ICommentRepository
         var replies = await _context.Comment.Where(c => c.ParentId == commentId).ToListAsync();
         return replies;
     }
+
+    public async Task UpdateAsync(Guid commentId, string newContent)
+    {
+        var comment = _context.Comment.First(c => c.Id == commentId);
+        comment.Content = newContent;
+        comment.ModifiedDate = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+    }
 }

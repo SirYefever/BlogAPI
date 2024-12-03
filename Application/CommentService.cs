@@ -23,9 +23,9 @@ public class CommentService: ICommentService
         return comment;
     }
 
-    public Task<Comment> UpdateCommentAsync(Guid oldCommentId, Comment newComment)
+    public async Task UpdateCommentAsync(Guid oldCommentId, string newContent)
     {
-        throw new NotImplementedException();
+        await _commentRepository.UpdateAsync(oldCommentId, newContent);
     }
 
     public Task DeleteCommentAsync(Guid commentId)
