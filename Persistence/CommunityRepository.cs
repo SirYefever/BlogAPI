@@ -47,7 +47,7 @@ public class CommunityRepository: ICommunityRepository
         throw new NotImplementedException();
     }
 
-    public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request)
+    public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request, List<PostLike> likes)
     {
         var posts = _context.Posts.AsQueryable();
         
@@ -69,8 +69,8 @@ public class CommunityRepository: ICommunityRepository
             {
                 "createAsc" => post => post.CreateTime,
                 "createDesc" => post => post.CreateTime,
-                "LikeAsc" => post => post.Likes,
-                "LikeDesc" => post => post.Likes,
+                "LikeAsc" => post => likes.Select(pl => pl.PostId == post.Id).Count(),
+                "LikeDesc" => post =>  likes.Select(pl => pl.PostId == post.Id).Count(),
                 _ => post => post.Id
             };
             if (request.Sorting.ToString().ToLower().Contains("desc"))

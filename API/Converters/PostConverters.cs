@@ -11,13 +11,15 @@ public class PostConverters
     private readonly IPostTagRepository _postTagRepository;
     private readonly ICommentRepository _commentRepository;
     private readonly ITagRepository _tagRepository;
+    private readonly IPostLikeRepository _postLikeRepository;
 
-    public PostConverters(TagConverters tagConverters, IPostTagRepository postTagRepository, ICommentRepository commentRepository, ITagRepository tagRepository)
+    public PostConverters(TagConverters tagConverters, IPostTagRepository postTagRepository, ICommentRepository commentRepository, ITagRepository tagRepository, IPostLikeRepository postLikeRepository)
     {
         _tagConverters = tagConverters;
         _postTagRepository = postTagRepository;
         _commentRepository = commentRepository;
         _tagRepository = tagRepository;
+        _postLikeRepository = postLikeRepository;
     }
 
     public static Post PostDtoToPost(PostDto dto)
@@ -34,7 +36,6 @@ public class PostConverters
         post.CommunityName = dto.CommunityName;
         post.AdressId = dto.AdressId;
         post.Image  = dto.Image;
-        post.Likes = dto.Likes;
         post.AuthorId = dto.AuthorId;
         post.Author = dto.Author;
         post.CommentsCount = dto.CommentsCount;
@@ -55,11 +56,12 @@ public class PostConverters
         dto.CommunityName = post.CommunityName;
         dto.AdressId = post.AdressId;
         dto.Image  = post.Image;
-        dto.Likes = post.Likes;
         dto.AuthorId = post.AuthorId;
         dto.Author = post.Author;
         dto.CommentsCount = post.CommentsCount;
-        //process tags
+        
+        dto.Likes = await _postLikeRepository.GetLikeCountByPostIdAsync(post.Id);
+        
         var postTags = await _postTagRepository.GetByPostId(post.Id);
         var tagIds = postTags.Select(pt => pt.TagId).ToList();
         var tags = await _tagRepository.GetByIdsAsync(tagIds);

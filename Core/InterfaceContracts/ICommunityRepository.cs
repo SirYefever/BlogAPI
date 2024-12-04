@@ -10,5 +10,5 @@ public interface ICommunityRepository
     Task<List<Community>> GetAll();
     Task<Community> UpdateById(Guid id, Community newCommunity);
     Task DeleteById(Guid id);
-    Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request);
+    Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request, List<PostLike> likes);
 }

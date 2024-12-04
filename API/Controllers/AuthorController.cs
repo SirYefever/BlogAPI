@@ -13,10 +13,12 @@ namespace API.Controllers;
 public class AuthorController: ControllerBase
 {
     private readonly IAuthorService _authorService;
+    private readonly AuthorConverters _authorConverters;
 
-    public AuthorController(IAuthorService authorService)
+    public AuthorController(IAuthorService authorService, AuthorConverters authorConverters)
     {
         _authorService = authorService;
+        _authorConverters = authorConverters;
     }
 
     [SwaggerOperation("Get all authors")]
@@ -28,7 +30,7 @@ public class AuthorController: ControllerBase
         var authors = await _authorService.GetAllAsync();
         var authorDtos = new List<AuthorDto>();
         foreach (var author in authors)
-            authorDtos.Add(AuthorConverters.AuthorToAuthorDto(author));
+            authorDtos.Add(await _authorConverters.AuthorToAuthorDto(author));
         
         return Ok(authorDtos);
     }

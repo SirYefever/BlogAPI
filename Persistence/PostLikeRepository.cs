@@ -1,5 +1,6 @@
 using Core.InterfaceContracts;
 using Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
@@ -12,6 +13,10 @@ public class PostLikeRepository: IPostLikeRepository
         _context = context;
     }
 
+    public async Task<List<PostLike>> GetAllAsync()
+    {
+        return await _context.PostLike.ToListAsync();
+    }
     public async Task AddAsync(PostLike postLike)
     {
         _context.PostLike.Add(postLike);
@@ -30,5 +35,17 @@ public class PostLikeRepository: IPostLikeRepository
         {
             throw new ArgumentException("Such like was not found.");
         }
+    }
+
+    public async Task<int> GetLikeCountByPostIdAsync(Guid postId)
+    {
+        var postLikeCount = await _context.PostLike.Where(p => p.PostId == postId).CountAsync();
+        return postLikeCount;
+    }
+
+    public async Task<int> GetLikeCountByUserIdAsync(Guid userId)
+    {
+        var likesRecievedByUser = await _context.PostLike.Where(pl => pl.PostAuthorId == userId).CountAsync();
+        return likesRecievedByUser;
     }
 }

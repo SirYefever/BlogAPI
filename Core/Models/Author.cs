@@ -6,7 +6,6 @@ public class Author
     {
         Id = user.Id;
         Posts = 1;
-        Likes = post.Likes;
         FullName = user.FullName;
         CreateTime = user.CreateTime;
         Gender = user.Gender;
@@ -17,6 +16,5 @@ public class Author
     public DateTime? BirthDate { get; set; }
     public Gender Gender { get; set; }
     public int? Posts { get; set; }
-    public int? Likes { get; set; }
     public DateTime? CreateTime { get; set; }
 }

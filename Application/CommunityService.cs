@@ -9,11 +9,13 @@ public class CommunityService: ICommunityService
 {
     private readonly ICommunityRepository _communityRepository;
     private readonly IUserCommunityRepository _userCommunityRepository;
+    private readonly IPostLikeRepository _postLikeRepository;
 
-    public CommunityService(ICommunityRepository communityRepository, IUserCommunityRepository userCommunityRepository)
+    public CommunityService(ICommunityRepository communityRepository, IUserCommunityRepository userCommunityRepository, IPostLikeRepository postLikeRepository)
     {
         _communityRepository = communityRepository;
         _userCommunityRepository = userCommunityRepository;
+        _postLikeRepository = postLikeRepository;
     }
 
     public async Task<Community> CreateCommunityAsync(Community community)
@@ -50,6 +52,7 @@ public class CommunityService: ICommunityService
 
     public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request)
     {
-        return await _communityRepository.GetPostsOfCommunity(request);
+        var postLikes = await _postLikeRepository.GetAllAsync();
+        return await _communityRepository.GetPostsOfCommunity(request, postLikes);
     }
 }

@@ -28,7 +28,9 @@ public class PostService: IPostService
         {
             curUserCommunities = await _userCommunityRepository.GetUserCommunitiesByUserIdAsync(userId);
         }
-        var posts =  await _postRepository.GetAvailabePosts(request, userId, curUserCommunities);
+
+        var postLikes = await _postLikeRepository.GetAllAsync();
+        var posts =  await _postRepository.GetAvailabePosts(request, userId, postLikes, curUserCommunities);
         return posts;
     }
 
@@ -53,14 +55,13 @@ public class PostService: IPostService
 
     public async Task LikePost(Guid postId, Guid userId)
     {
-        var postLike = new PostLike(postId, userId);
+        var post = await _postRepository.GetById(postId);
+        var postLike = new PostLike(postId, userId, post.AuthorId);
         await _postLikeRepository.AddAsync(postLike);
-        await _postRepository.Like(postId);
     }
 
     public async Task UnlikePost(Guid postId, Guid userId)
     {
         await _postLikeRepository.DeleteAsync(postId, userId);
-        await _postRepository.Unlike(postId);
     }
 }

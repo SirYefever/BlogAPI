@@ -28,7 +28,8 @@ public class PostRepository: IPostRepository
     }
     
 
-    public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId, List<UserCommunity> curUserCommunities = null)
+    public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId, List<PostLike> postLikes,
+        List<UserCommunity> curUserCommunities = null)
     {//TODO: figure out why nothing is awaitable here
         
         var posts = _context.Posts.AsQueryable();
@@ -61,8 +62,8 @@ public class PostRepository: IPostRepository
             {
                 "createAsc" => post => post.CreateTime,
                 "createDesc" => post => post.CreateTime,
-                "LikeAsc" => post => post.Likes,
-                "LikeDesc" => post => post.Likes,
+                "LikeAsc" => post => postLikes.Select(pl => pl.PostId == post.Id).Count(),
+                "LikeDesc" => post => postLikes.Select(pl => pl.PostId == post.Id).Count(),
                 _ => post => post.Id
             };
             if (request.Sorting.ToString().ToLower().Contains("desc"))
@@ -86,19 +87,5 @@ public class PostRepository: IPostRepository
         }
 
         return posts.ToList();
-    }
-
-    public async Task Like(Guid postId)
-    {
-        var post = _context.Posts.First(post => post.Id == postId);
-        post.Likes++;
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task Unlike(Guid postId)
-    {
-        var post = _context.Posts.First(post => post.Id == postId);
-        post.Likes--;
-        await _context.SaveChangesAsync();
     }
 }

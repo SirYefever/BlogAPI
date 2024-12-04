@@ -79,6 +79,7 @@ builder.Services.AddTransient<PostConverters>();
 builder.Services.AddTransient<CommunityConverters>();
 builder.Services.AddTransient<UserCommunityConverters>();
 builder.Services.AddTransient<CommentConverter>();
+builder.Services.AddTransient<AuthorConverters>();
 
 //TODO: remove padlock icons for [AllowAnonymous] methods
 builder.Services.AddSwaggerGen(options =>

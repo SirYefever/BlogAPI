@@ -17,7 +17,5 @@ public class Post
     public Guid? CommunityId { get; set; }
     public string? CommunityName { get; set; }
     public Guid? AdressId { get; set; }
-    public int Likes { get; set; }
-    public bool HasLike { get => Likes > 0; }
     public int CommentsCount { get; set; }
 }
