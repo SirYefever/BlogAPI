@@ -52,9 +52,9 @@ public class UserRepository: IUserRepository
         return user.Token;
     }
 
-    public async Task<User> Update(User userToUpdate, User newUser)
+    public async Task<User> Update(Guid userToUpdateId, User newUser)
     {
-        var user = _context.Users.FirstOrDefault(user => user.Id == userToUpdate.Id);
+        var user = _context.Users.FirstOrDefault(user => user.Id == userToUpdateId);
         _context.Entry(user).CurrentValues.SetValues(newUser);
         await _context.SaveChangesAsync();
         return user;

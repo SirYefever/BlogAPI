@@ -9,6 +9,6 @@ public interface IUserRepository
     // User GetByCreds(string email, string password);//TODO: figure out weather it's better to pass UserCredetials here or string email and string password
     Task<User> GetByEmail(string email);
     Task<string> GetTokenByEmail(string email);
-    Task<User> Update(User userToUpdate, User newUser);
+    Task<User> Update(Guid userToUpdateId, User newUser);
     Task Logout(Guid userId);
 }

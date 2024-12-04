@@ -76,4 +76,34 @@ public class UserController: ControllerBase
         await _userService.Logout(curUserId);
         return Ok();
     }
+    
+    [SwaggerOperation("Get user profile")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet("api/account/profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
+        var user = await _userService.GetUserById(curUserId);
+        var dto = UserConverters.UserToUserDto(user);
+        return Ok(dto);
+    }
+    
+    [SwaggerOperation("Edit user profile")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPut("api/account/profile")]
+    public async Task<IActionResult> EditProfile(UserEditModel dto)
+    {
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
+        var userToUpdate = await _userService.GetUserById(curUserId);
+        UserConverters.UserEditDtoToUser(userToUpdate, dto);
+        await _userService.UpdateUser(curUserId, userToUpdate);
+        return Ok();
+    }
 }

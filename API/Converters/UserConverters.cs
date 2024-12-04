@@ -72,5 +72,14 @@ public class UserConverters
         model.PhoneNumber = dto.PhoneNumber;
         return model;
     }
-    
+
+    public static User UserEditDtoToUser(User user, UserEditModel model)
+    {
+        user.FullName = model.FullName;
+        user.Email = model.Email;
+        user.BirthDate = model.BirthDate;
+        user.Gender = model.Gender;
+        user.PhoneNumber = model.PhoneNumber;
+        return user;
+    }
 }

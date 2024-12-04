@@ -50,9 +50,9 @@ public class UserService : IUserService
         return user;
     }
 
-    public Task<User> UpdateUser(User userToBeUpdated, User updatedUser)
+    public async Task UpdateUser(Guid userToBeUpdatedId, User updatedUser)
     {
-        throw new NotImplementedException();
+        await _userRepository.Update(userToBeUpdatedId, updatedUser);
     }
 
     public Task<User> DeleteUser(User user)
@@ -72,7 +72,7 @@ public class UserService : IUserService
         var token = _jwtProvider.GenerateToken(user);
         var newUserData = user;
         newUserData.Token = token;
-        await _userRepository.Update(user, newUserData);
+        await _userRepository.Update(user.Id, newUserData);
         
         return token;
     }
