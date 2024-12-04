@@ -41,7 +41,7 @@ public class PostConverters
         return post;
     }
     
-    public static PostDto PostToPostDto(Post post)
+    public async Task<PostDto> PostToPostDto(Post post)
     {
         var dto = new PostDto();
         dto.Id = post.Id;
@@ -59,6 +59,12 @@ public class PostConverters
         dto.AuthorId = post.AuthorId;
         dto.Author = post.Author;
         dto.CommentsCount = post.CommentsCount;
+        //process tags
+        var postTags = await _postTagRepository.GetByPostId(post.Id);
+        var tagIds = postTags.Select(pt => pt.TagId).ToList();
+        var tags = await _tagRepository.GetByIdsAsync(tagIds);
+        var tagDtos = tags.Select(tag => TagConverters.TagToTagDto(tag)).ToList();
+        dto.Tags = tagDtos;
         return dto;
     }
     

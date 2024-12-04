@@ -72,6 +72,7 @@ builder.Services.AddTransient<IPostTagService, PostTagService>();
 builder.Services.AddTransient<ICommentRepository, CommentRepository>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddTransient<ICommunityPostRepository, CommunityPostRepository>();
+builder.Services.AddTransient<IPostLikeRepository, PostLikeRepository>();
 builder.Services.AddTransient<UserConverters>();
 builder.Services.AddTransient<TagConverters>();
 builder.Services.AddTransient<PostConverters>();

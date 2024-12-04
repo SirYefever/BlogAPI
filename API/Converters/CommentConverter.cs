@@ -12,5 +12,12 @@ public class CommentConverter
         comment.ParentId = dto.ParentId;
         return comment;
     }
+
+
+    public static CommentDto CommentToCommentDto(Comment comment)
+    {
+        var commentDto = new CommentDto(comment);
+        return commentDto;
+    }
     
 }

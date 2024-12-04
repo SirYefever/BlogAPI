@@ -37,7 +37,7 @@ public class CommentRepository: ICommentRepository
 
     public async Task IncrementSubCommentsCount(Guid commentId)
     {
-        var comment = await _context.Comment.FirstAsync(c => c.Id == commentId);
+       var comment = await _context.Comment.FirstAsync(c => c.Id == commentId);
         comment.SubComments++;
         await _context.SaveChangesAsync();
     }
@@ -68,7 +68,7 @@ public class CommentRepository: ICommentRepository
     public async Task<List<Comment>> GetCommentsByPostId(Guid postId)
     {
         var comments = _context.Comment.AsQueryable();
-        comments = comments.Where(c => c.postId == postId);
+        comments = comments.Where(c => c.postId == postId && c.ParentId == null);
         return await comments.ToListAsync();
     }
 }

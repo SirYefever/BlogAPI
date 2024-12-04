@@ -26,7 +26,8 @@ public class CommentController: ControllerBase
     public async Task<IActionResult> GetReplies(Guid id)
     {
         var replies = await _commentService.GetReplies(id);
-        return Ok(replies);
+        var repliesDto = replies.Select(r => new CommentDto(r));
+        return Ok(repliesDto);
     }
 
     [SwaggerOperation("Add a comment to a concrete post")]

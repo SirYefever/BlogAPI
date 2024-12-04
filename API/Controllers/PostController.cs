@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
@@ -73,7 +74,36 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetInformationByIdAsync(Guid id)
     {
         var post = await _postService.GetPostById(id);
-        var postFullDto = await _postConverters.PostToPostFullDto(post);
-        return Ok(postFullDto);
+        var postDto = await _postConverters.PostToPostDto(post);
+        return Ok(postDto);
+    }
+
+    [SwaggerOperation("Add like to concrete post")]
+    [HttpPost("api/post/{postId}/like")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> LikePost(Guid postId)
+    {
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        await _postService.LikePost(postId, userId);
+        return Ok();
+    }
+    
+    
+    [SwaggerOperation("Delete like to concrete post")]
+    [HttpDelete("api/post/{postId}/like")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveLikeFromPost(Guid postId)
+    {
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        await _postService.UnlikePost(postId, userId);
+        return Ok();
     }
 }

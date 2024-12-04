@@ -88,18 +88,17 @@ public class PostRepository: IPostRepository
         return posts.ToList();
     }
 
-    // public List<Post> GetAvailabePostsOnlyMyCommunities(PostListRequest request, Guid userId)
-    // {
-    //     
-    // }
-
-    public Task AddLike(Guid postId, Guid userId)
+    public async Task Like(Guid postId)
     {
-        throw new NotImplementedException();
+        var post = _context.Posts.First(post => post.Id == postId);
+        post.Likes++;
+        await _context.SaveChangesAsync();
     }
 
-    public Task RemoveLike(Guid postId, Guid userId)
+    public async Task Unlike(Guid postId)
     {
-        throw new NotImplementedException();
+        var post = _context.Posts.First(post => post.Id == postId);
+        post.Likes--;
+        await _context.SaveChangesAsync();
     }
 }

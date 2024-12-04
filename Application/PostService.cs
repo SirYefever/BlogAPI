@@ -11,12 +11,14 @@ public class PostService: IPostService
     private readonly IUserRepository _userRepository;
     private readonly IUserCommunityRepository _userCommunityRepository;
     private readonly ICommunityPostRepository _communityPostRepository;
-    public PostService(IPostRepository postRepository, IUserRepository userRepository, IUserCommunityRepository userCommunityRepository, ICommunityPostRepository communityPostRepository)
+    private readonly IPostLikeRepository _postLikeRepository;
+    public PostService(IPostRepository postRepository, IUserRepository userRepository, IUserCommunityRepository userCommunityRepository, ICommunityPostRepository communityPostRepository, IPostLikeRepository postLikeRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
         _userCommunityRepository = userCommunityRepository;
         _communityPostRepository = communityPostRepository;
+        _postLikeRepository = postLikeRepository;
     }
 
     public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId)
@@ -49,13 +51,16 @@ public class PostService: IPostService
         return post;
     }
 
-    public Task LikePost(Guid postId)
+    public async Task LikePost(Guid postId, Guid userId)
     {
-        throw new NotImplementedException();
+        var postLike = new PostLike(postId, userId);
+        await _postLikeRepository.AddAsync(postLike);
+        await _postRepository.Like(postId);
     }
 
-    public Task UnlikePost(Guid postId)
+    public async Task UnlikePost(Guid postId, Guid userId)
     {
-        throw new NotImplementedException();
+        await _postLikeRepository.DeleteAsync(postId, userId);
+        await _postRepository.Unlike(postId);
     }
 }

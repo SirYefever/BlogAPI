@@ -18,6 +18,7 @@ public partial class MainDbContext: DbContext
     public virtual DbSet<PostTag> PostTag { get; set; }
     public virtual DbSet<CommunityPost> CommunityPost { get; set; }
     public virtual DbSet<Comment> Comment { get; set; }
+    public virtual DbSet<PostLike> PostLike { get; set; }
     
     //TODO: figure out what this function does
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,7 +34,10 @@ public partial class MainDbContext: DbContext
             .HasKey(pt => new { pt.PostId, pt.TagId });
 
         modelBuilder.Entity<CommunityPost>()
-            .HasKey(cp => new { CommuntiyId = cp.CommunityId, cp.PostId });//TODO: what id this constructor?
+            .HasKey(cp => new { cp.CommunityId, cp.PostId });//TODO: what id this constructor?
+        
+        modelBuilder.Entity<PostLike>()
+            .HasKey(pt => new { pt.PostId, pt.UserWhoLikedId });
     }
     // partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
