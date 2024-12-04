@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Dto;
 using API.Converters;
 using Application.Dto;
@@ -61,5 +62,18 @@ public class UserController: ControllerBase
         var token = await _userService.Login(creds.Email, creds.Password);
         TokenResponse tokenResponse = new TokenResponse(token);
         return tokenResponse;
+    }
+
+    [SwaggerOperation("Log out system user")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost("api/account/logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var curUserId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
+        await _userService.Logout(curUserId);
+        return Ok();
     }
 }

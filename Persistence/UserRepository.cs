@@ -24,7 +24,7 @@ public class UserRepository: IUserRepository
             //TODO: throw exception... but in which way?
             throw new ("Registration with there credentials is not allowed.");
         }
-        //TODO: figure out weather next to lines have to be wraped with try catch
+        //TODO: figure out weather next to lines have to be wrapped with try catch
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return user;
@@ -34,19 +34,6 @@ public class UserRepository: IUserRepository
     {
         return await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
     }
-
-    //TODO: figure out weather this function is needed or not.
-    // public User GetByCreds(string email, string password)//TODO: figure out weather this has to be Task<User> or not
-    // {
-    //     //find item with corresponding email, check passwords for match
-    //     var user = _context.Users.First(user => user.Email == email);// TODO: figure out weather we need to catch exception here
-    //     if (user.Password == password)
-    //     {
-    //         return user;
-    //     }
-    //     // TODO: Determine how to handle this case 
-    //     return null;
-    // }
 
     public async Task<User> GetByEmail(string email)
     {
@@ -71,5 +58,19 @@ public class UserRepository: IUserRepository
         _context.Entry(user).CurrentValues.SetValues(newUser);
         await _context.SaveChangesAsync();
         return user;
+    }
+
+    public async Task Logout(Guid userId)
+    {
+        var user = await _context.Users.FirstAsync(u => u.Id == userId);
+        if (user != null)
+        {
+            user.Token = null;
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            throw new InvalidOperationException("User not found.");
+        }    
     }
 }

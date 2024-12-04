@@ -76,4 +76,9 @@ public class UserService : IUserService
         
         return token;
     }
+
+    public async Task Logout(Guid userId)
+    {
+        await _userRepository.Logout(userId);
+    }
 }

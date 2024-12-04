@@ -10,4 +10,5 @@ public interface IUserRepository
     Task<User> GetByEmail(string email);
     Task<string> GetTokenByEmail(string email);
     Task<User> Update(User userToUpdate, User newUser);
+    Task Logout(Guid userId);
 }

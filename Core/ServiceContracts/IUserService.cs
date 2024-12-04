@@ -9,4 +9,5 @@ public interface IUserService
    Task<User> UpdateUser(User userToBeUpdated, User updatedUser); 
    Task<User> DeleteUser(User user); 
    Task<string> Login(string email, string password); 
+   Task Logout(Guid userId);
 }
