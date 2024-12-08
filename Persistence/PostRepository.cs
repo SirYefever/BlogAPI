@@ -86,6 +86,6 @@ public class PostRepository: IPostRepository
             posts = posts.Skip((int)(request.PageSize.Value * (request.Page.Value - 1)));
         }
 
-        return posts.ToList();
+        return posts.ToList();//Don't we need ToListAsync() here?
     }
 }

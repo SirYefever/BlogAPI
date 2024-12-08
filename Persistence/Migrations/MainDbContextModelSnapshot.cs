@@ -59,7 +59,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Community", b =>
@@ -83,7 +83,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Communities");
+                    b.ToTable("Communities", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.CommunityPost", b =>
@@ -96,7 +96,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("CommunityId", "PostId");
 
-                    b.ToTable("CommunityPost");
+                    b.ToTable("CommunityPost", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Post", b =>
@@ -143,7 +143,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.PostLike", b =>
@@ -159,7 +159,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("PostId", "UserWhoLikedId");
 
-                    b.ToTable("PostLike");
+                    b.ToTable("PostLike", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.PostTag", b =>
@@ -172,7 +172,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("PostId", "TagId");
 
-                    b.ToTable("PostTag");
+                    b.ToTable("PostTag", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.Tag", b =>
@@ -190,7 +190,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.User", b =>
@@ -228,7 +228,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Core.Models.UserCommunity", b =>
@@ -244,7 +244,7 @@ namespace Playground2.Migrations
 
                     b.HasKey("UserId", "CommunityId");
 
-                    b.ToTable("UserCommunity");
+                    b.ToTable("UserCommunity", (string)null);
                 });
 #pragma warning restore 612, 618
         }

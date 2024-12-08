@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Persistence.GarContext;
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -32,8 +33,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionStringGar = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<GarDbContext>(options =>
+    options.UseNpgsql(connectionStringGar));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(options =>
 {
@@ -50,7 +54,6 @@ var configuration = new ConfigurationBuilder()
 
 //TODO: figure out what these lines do
 builder.Services.AddControllers();
-builder.Services.AddDbContext<MainDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<GetPosts>();
@@ -74,6 +77,8 @@ builder.Services.AddTransient<ICommentRepository, CommentRepository>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddTransient<ICommunityPostRepository, CommunityPostRepository>();
 builder.Services.AddTransient<IPostLikeRepository, PostLikeRepository>();
+builder.Services.AddTransient<IGarRepository, GarRepository>();
+builder.Services.AddTransient<IGarService, GarService>();
 builder.Services.AddTransient<UserConverters>();
 builder.Services.AddTransient<TagConverters>();
 builder.Services.AddTransient<PostConverters>();
