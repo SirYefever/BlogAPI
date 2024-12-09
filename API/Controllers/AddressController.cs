@@ -19,9 +19,19 @@ public class AddressController: ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Test(Guid objectGuid)
+    public async Task<IActionResult> GetAddressChain(Guid objectGuid)
     {
         var restult = await _garService.GetAddressChainAsync(objectGuid);
+        return Ok(restult);
+    }
+    
+    [HttpGet("api/address/search")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchAddress(long parentId)
+    {
+        var restult = await _garService.Search(parentId);
         return Ok(restult);
     }
 }

@@ -6,20 +6,25 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class GarService: IGarService
+public class GarService : IGarService
 {
     private readonly IGarRepository _garRepository;
-    
+
     public GarService(IGarRepository garRepository)
     {
         _garRepository = garRepository;
     }
-    
-    
+
     public async Task<List<SearchAddressModel>> GetAddressChainAsync(Guid objectId)
     {
         var result = await _garRepository.GetAddressChainAsync(objectId);
         return result;
+    }
+
+    public async Task<List<SearchAddressModel>> Search(long parentId)
+    {
+        var searchedModels = await _garRepository.Search(parentId);
+        return searchedModels;
     }
 
 }

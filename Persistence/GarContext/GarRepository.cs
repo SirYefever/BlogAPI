@@ -2,12 +2,14 @@ using System.Globalization;
 using Core;
 using Core.InterfaceContracts;
 using Core.Models.Gar;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.GarContext;
 
 public class GarRepository: IGarRepository
 {
     private readonly GarDbContext _context;
+    private readonly GarConverter _garConverter;
     private readonly Guid _tomskRegionGuid = Guid.Parse("889b1f3a-98aa-40fc-9d3d-0f41192758ab");
     private readonly long _tomskRegionId = 1281271;
     private readonly Guid _tomskCityGuid = Guid.Parse("e3b0eae8-a4ce-4779-ae04-5c0797de66be");
@@ -16,6 +18,7 @@ public class GarRepository: IGarRepository
     public GarRepository(GarDbContext context, GarConverter garConverter)
     {
         _context = context;
+        _garConverter = garConverter;
     }
 
     //TODO: manage awaiting in these 4 functions
@@ -86,7 +89,7 @@ public class GarRepository: IGarRepository
     }
     public async Task<SearchAddressModel> GetParentObject(long objectId)
     {
-        var garConverter = new GarConverter();
+        var _garConverter = new GarConverter();
         long parentId = 0;
         try
         {
@@ -105,19 +108,18 @@ public class GarRepository: IGarRepository
         try
         {
             var parentObject = await GetAddressObjByIdAsync(parentId);
-            result = garConverter.AsAddrObjToSearchAddressModel(parentObject);
+            result = _garConverter.AsAddrObjToSearchAddressModel(parentObject);
         }
         catch
         {
             var parentHouse = await GetHouseByIdAsync(parentId);
-            result = garConverter.AsHousesToSearchAddressModel(parentHouse);
+            result = _garConverter.AsHousesToSearchAddressModel(parentHouse);
         }
         return result;
     }
 
     public async Task<List<SearchAddressModel>> GetAddressChainAsync(Guid objectGuid)
     {
-        var garConverter = new GarConverter();
         var chain = new List<SearchAddressModel>();
         var searchedObject = await GetAddressObjByGuidAsync(objectGuid);
         var model = new SearchAddressModel();
@@ -125,12 +127,12 @@ public class GarRepository: IGarRepository
         if (searchedObject == null)
         {
             var searchedHouse = await GetHouseByGuidAsync(objectGuid);
-            model = garConverter.AsHousesToSearchAddressModel(searchedHouse);
+            model = _garConverter.AsHousesToSearchAddressModel(searchedHouse);
             currentId = searchedHouse.Objectid;
         }
         else
         {
-            model = garConverter.AsAddrObjToSearchAddressModel(searchedObject);
+            model = _garConverter.AsAddrObjToSearchAddressModel(searchedObject);
             currentId = searchedObject.Objectid;
         }
         chain.Add(model);
@@ -154,5 +156,35 @@ public class GarRepository: IGarRepository
         
         FillAddressChain(searchedModel.ObjectId, chain);
         return new List<SearchAddressModel>();
+    }
+
+    public async Task<SearchAddressModel> GetObject(long objectId)
+    {
+        var result = new SearchAddressModel();
+        try
+        {
+            var addressObject = await GetAddressObjByIdAsync(objectId);
+            result = _garConverter.AsAddrObjToSearchAddressModel(addressObject);
+        }
+        catch
+        {
+            var house = await GetHouseByIdAsync(objectId);
+            result = _garConverter.AsHousesToSearchAddressModel(house);
+        }
+
+        return result;
+    }
+
+    public async Task<List<SearchAddressModel>> Search(long parentObjectId)
+    {
+        var hierarchyObjects = _context.AsAdmHierarchy.AsQueryable();
+        var searchedItems = await hierarchyObjects.Where(h => h.Parentobjid == parentObjectId).ToListAsync();
+        Func<AsAdmHierarchy, Task<SearchAddressModel>> searchFunc = async(h) => await GetObject((long)h.Objectid);
+        var searchedItemsConverted = new List<SearchAddressModel>();
+        foreach (var searchedItem in searchedItems)
+        {
+            searchedItemsConverted.Add(await GetObject((long)searchedItem.Objectid));
+        }
+        return searchedItemsConverted;
     }
 }
