@@ -1,8 +1,9 @@
 using Core;
+using Core.InterfaceContracts;
 using Core.Models;
 using Core.Models.Gar;
 
-namespace API.Converters;
+namespace Persistence.GarContext;
 
 public class GarConverter
 {
@@ -59,15 +60,48 @@ public class GarConverter
         return result;
     }
 
-    // public SearchAddressModel AsAddrObjToSearchAddressModel(AsAddrObj asAddrObj)
+    public SearchAddressModel AsAddrObjToSearchAddressModel(AsAddrObj asAddrObj)
+    {
+        var model = new SearchAddressModel();
+        model.ObjectGuid = asAddrObj.Objectguid;
+        model.ObjectId = asAddrObj.Objectid;
+        model.Text = ConstructTextFieldForAddrObj(asAddrObj);
+        
+        
+        int.TryParse(asAddrObj.Level, out int level);
+        model.ObjectLevel = (GarAddressLevel)level;
+        model.ObjectLevelText = _levels[(GarAddressLevel)level];
+        return model;
+    }
+    
+    public SearchAddressModel AsHousesToSearchAddressModel(AsHouses house)
+    {
+        var model = new SearchAddressModel();
+        model.ObjectGuid = house.Objectguid;
+        model.ObjectId = house.Objectid;
+        model.Text = ConstructTextFieldForHouse(house);
+        
+        model.ObjectLevel = GarAddressLevel.Building;  
+        model.ObjectLevelText = _levels[GarAddressLevel.Building];
+        
+        return model;
+    }
+
+    // public async Task<SearchAddressModel> AsAdmHierarchyToSearchAddressModel(AsAdmHierarchy obj, IGarRepository garRepository)
     // {
     //     var model = new SearchAddressModel();
-    //     model.ObjectGuid = asAddrObj.Objectguid;
-    //     model.ObjectId = asAddrObj.Objectid;
-    //     model.Text = ConstructTextFieldForAddrObj(asAddrObj);
-    //     
-    //     
-    //     int.TryParse(asAddrObj.Level, out int level);
-    //     model.ObjectLevel = (GarAddressLevel)level;
+    //     model.ObjectId = (long)obj.Objectid;
+    //     try
+    //     {
+    //         var searchedHouse = await garRepository.GetPresentHouseByIdAsync((long)obj.Objectid);
+    //         model = AsHousesToSearchAddressModel(searchedHouse);
+    //     }
+    //     catch
+    //     {
+    //         var searchedAddressObject = await garRepository.GetPresentAddressObjByIdAsync((long)obj.Objectid);
+    //         model = AsAddrObjToSearchAddressModel(searchedAddressObject);
+    //     }
+    //
+    //     return model;
     // }
 }

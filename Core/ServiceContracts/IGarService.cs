@@ -5,5 +5,5 @@ namespace Core.ServiceContracts;
 
 public interface IGarService
 {
-    public Task<List<SearchAddressModel>> GetAddressChainAsync();
+    public Task<List<SearchAddressModel>> GetAddressChainAsync(Guid objectId);
 }

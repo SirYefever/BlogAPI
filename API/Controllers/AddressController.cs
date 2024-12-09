@@ -21,7 +21,7 @@ public class AddressController: ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Test(Guid objectGuid)
     {
-        var restult = await _garService.Test(objectGuid);
+        var restult = await _garService.GetAddressChainAsync(objectGuid);
         return Ok(restult);
     }
 }

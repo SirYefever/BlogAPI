@@ -16,10 +16,10 @@ public class GarService: IGarService
     }
     
     
-    public Task<List<SearchAddressModel>> GetAddressChainAsync()
+    public async Task<List<SearchAddressModel>> GetAddressChainAsync(Guid objectId)
     {
-        var addressModel = new SearchAddressModel();
-        throw new NotImplementedException();
+        var result = await _garRepository.GetAddressChainAsync(objectId);
+        return result;
     }
 
 }
