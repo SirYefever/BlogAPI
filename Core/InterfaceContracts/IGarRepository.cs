@@ -11,5 +11,6 @@ public interface IGarRepository
     public Task<List<SearchAddressModel>> GetAddressChainAsync(Guid objectId);
     public Task<List<SearchAddressModel>> FillAddressChain(long currentId, List<SearchAddressModel> chain);
     public Task<SearchAddressModel> GetParentObject(long objectId);
-    public Task<List<SearchAddressModel>> Search(long parentObjectId);
+    public Task<List<SearchAddressModel>> Search(long parentObjectId, string? query);
+    public Task<List<SearchAddressModel>> SearchFirstTen(long parentObjectId);
 }

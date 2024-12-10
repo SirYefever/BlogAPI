@@ -10,6 +10,15 @@ public class AddressController: ControllerBase
 {
     private readonly IGarService _garService;
 
+    [HttpGet("api/address/search")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchAddress(long parentId, string? query)
+    {
+        var restult = await _garService.Search(parentId, query);
+        return Ok(restult);
+    }
     public AddressController(IGarService garService)
     {
         _garService = garService;
@@ -25,13 +34,4 @@ public class AddressController: ControllerBase
         return Ok(restult);
     }
     
-    [HttpGet("api/address/search")]
-    [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchAddress(long parentId)
-    {
-        var restult = await _garService.Search(parentId);
-        return Ok(restult);
-    }
 }

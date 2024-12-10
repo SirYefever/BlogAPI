@@ -15,16 +15,19 @@ public class GarService : IGarService
         _garRepository = garRepository;
     }
 
+    public async Task<List<SearchAddressModel>> Search(long parentId, string? query)
+    {
+        if (query == null)
+            return await _garRepository.SearchFirstTen(parentId);
+        
+        return await _garRepository.Search(parentId, query);
+    }
+    
     public async Task<List<SearchAddressModel>> GetAddressChainAsync(Guid objectId)
     {
         var result = await _garRepository.GetAddressChainAsync(objectId);
         return result;
     }
 
-    public async Task<List<SearchAddressModel>> Search(long parentId)
-    {
-        var searchedModels = await _garRepository.Search(parentId);
-        return searchedModels;
-    }
 
 }

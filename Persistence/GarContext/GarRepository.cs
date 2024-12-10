@@ -101,6 +101,8 @@ public class GarRepository: IGarRepository
         }
         catch
         {
+            // Console.Error.WriteLine(parentId);
+            // throw new Exception("Something went wrong, parentId = " + parentId);
             return null;
         }
 
@@ -113,7 +115,8 @@ public class GarRepository: IGarRepository
         catch
         {
             var parentHouse = await GetHouseByIdAsync(parentId);
-            result = _garConverter.AsHousesToSearchAddressModel(parentHouse);
+            if (parentHouse != null)
+                result = _garConverter.AsHousesToSearchAddressModel(parentHouse);
         }
         return result;
     }
@@ -169,21 +172,39 @@ public class GarRepository: IGarRepository
         catch
         {
             var house = await GetHouseByIdAsync(objectId);
-            result = _garConverter.AsHousesToSearchAddressModel(house);
+            if (house != null)
+                result = _garConverter.AsHousesToSearchAddressModel(house);
         }
 
         return result;
     }
 
-    public async Task<List<SearchAddressModel>> Search(long parentObjectId)
+    public async Task<List<SearchAddressModel>> Search(long parentObjectId, string? query)
     {
         var hierarchyObjects = _context.AsAdmHierarchy.AsQueryable();
         var searchedItems = await hierarchyObjects.Where(h => h.Parentobjid == parentObjectId).ToListAsync();
-        Func<AsAdmHierarchy, Task<SearchAddressModel>> searchFunc = async(h) => await GetObject((long)h.Objectid);
         var searchedItemsConverted = new List<SearchAddressModel>();
         foreach (var searchedItem in searchedItems)
         {
-            searchedItemsConverted.Add(await GetObject((long)searchedItem.Objectid));
+            var curItem = await GetObject((long)searchedItem.Objectid);
+            if (curItem.ObjectId != 0)
+                if (curItem.Text.Contains(query))
+                    searchedItemsConverted.Add(await GetObject((long)searchedItem.Objectid));
+        }
+        return searchedItemsConverted;
+    }
+
+    public async Task<List<SearchAddressModel>> SearchFirstTen(long parentObjectId)
+    {
+        var outputLimit = 10;
+        var hierarchyObjects = _context.AsAdmHierarchy.AsQueryable();
+        var searchedItems = await hierarchyObjects.Where(h => h.Parentobjid == parentObjectId).ToListAsync();
+        var searchedItemsConverted = new List<SearchAddressModel>();
+        for (int i = 0; i < Math.Min(outputLimit, searchedItems.Count); i++)
+        {
+            var curItem = await GetObject((long)searchedItems[i].Objectid);
+            if (curItem.ObjectId != 0)
+                searchedItemsConverted.Add(await GetObject((long)searchedItems[i].Objectid));
         }
         return searchedItemsConverted;
     }
