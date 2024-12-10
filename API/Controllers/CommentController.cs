@@ -1,13 +1,18 @@
 using System.Security.Claims;
 using API.Converters;
 using API.Dto;
+using Core.Models;
 using Core.ServiceContracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
 
+[ApiController]
+[ApiExplorerSettings(GroupName = "Comments")]
+[Authorize]
 public class CommentController: ControllerBase
 {
     private readonly ICommentService _commentService;
@@ -19,19 +24,28 @@ public class CommentController: ControllerBase
 
     [SwaggerOperation("Get all nested comments(replies)")]
     [HttpGet("api/comment/{id}/tree")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<CommentDto>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(Response),StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetReplies(Guid id)
     {
-        var replies = await _commentService.GetReplies(id);
+        List<Comment> replies = new List<Comment>();
+        try
+        {
+            replies = await _commentService.GetReplies(id);
+        }
+        catch
+        {
+            return StatusCode(500, new Response("An internal server error occurred.",
+                "Failed to get replies."));
+        }
         var repliesDto = replies.Select(r => new CommentDto(r));
         return Ok(repliesDto);
     }
 
     [SwaggerOperation("Add a comment to a concrete post")]
-    [HttpPost("api/post/{id}/comment")] //TODO: figure out why is it /post, instead of /comment
+    [HttpPost("api/post/{id}/comment")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
