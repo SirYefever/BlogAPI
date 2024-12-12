@@ -26,20 +26,16 @@ public class UserCommunityService: IUserCommunityService
 
     public async Task<CommunityRole> GetHighestRoleOfUserInCommunity(Guid communityId, Guid userId)
     {
-        try
-        {
-            var role = await _userCommunityRepository.GetHighestRoleOfUserInCommunity(communityId, userId);
-            return role;
-        }
-        catch
-        {
-            throw;
-        }
+        return await _userCommunityRepository.GetHighestRoleOfUserInCommunity(communityId, userId);
+    }
+
+    public async Task<bool> IsUserInTheCommunity(Guid communityId, Guid userId)
+    {
+        return await _userCommunityRepository.IsUserInCommunity(communityId, userId);
     }
 
     public async Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId)
     {
-        var userCommunityList = await _userCommunityRepository.GetUserCommunitiesByUserIdAsync(userId);
-        return userCommunityList;
+        return await _userCommunityRepository.GetUserCommunitiesByUserIdAsync(userId);
     }
 }

@@ -10,4 +10,6 @@ public interface IUserCommunityRepository
     Task DeleteByIds(Guid communityId, Guid userId);
     public Task<int> GetSubscriberCountById(Guid communityId);
     public Task<CommunityRole> GetHighestRoleOfUserInCommunity(Guid communityId, Guid userId);
+    public Task ConfirmUserBelongsToClosedCommunity(Guid communityId, Guid userId);
+    public Task<bool> IsUserInCommunity(Guid communityId, Guid userId);
 }

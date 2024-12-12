@@ -38,18 +38,15 @@ public class ExceptionHandlingMiddleware
         switch(exception)
         {
             case KeyNotFoundException:
-                message = exception.Message;
                 break;
             case UnauthorizedAccessException:
                 statusCode = HttpStatusCode.Unauthorized.ToString();
-                message = exception.Message;
                 break;
             case ForbiddenException:
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                message = exception.Message;
                 break;
         }
-
+        message = exception.Message;
         var response = new Response(statusCode.ToString(), message);
 
         await context.Response.WriteAsJsonAsync(response);

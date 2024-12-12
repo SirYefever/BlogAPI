@@ -35,24 +35,19 @@ public class CommunityService: ICommunityService
         return subscriberCount;
     }
 
+    public async Task<int> GetPostQuantity(Guid communityId)
+    {
+        return await _communityRepository.GetPostQuantity(communityId);
+    }
+
     public async Task<List<Community>> GetCommunities()
     {
         return await _communityRepository.GetAll();
     }
 
-    public Task<Community> UpdateCommunity(Guid communityToUpdateId, Community newCommunity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteCommunity(Guid communityToDeleteId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request)
+    public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request, Guid userId)
     {
         var postLikes = await _postLikeRepository.GetAllAsync();
-        return await _communityRepository.GetPostsOfCommunity(request, postLikes);
+        return await _communityRepository.GetPostsOfCommunity(request, postLikes, userId);
     }
 }

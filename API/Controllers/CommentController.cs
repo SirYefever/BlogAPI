@@ -43,7 +43,7 @@ public class CommentController: ControllerBase
     [SwaggerResponse(statusCode:400, description: "BadRequest")]
     [SwaggerResponse(statusCode:401, description: "Unauthorized")]
     [SwaggerResponse(statusCode:403, description: "Forbidden")]
-    [SwaggerResponse(statusCode:404, description: "Not Found", Type = typeof(Response))]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
     [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> AddCommentToPost(Guid id, [FromBody]CreateCommentDto model)
     {
@@ -77,7 +77,7 @@ public class CommentController: ControllerBase
     [SwaggerResponse(statusCode: 200, description: "Success")]
     [SwaggerResponse(statusCode:401, description: "Unauthorized")]
     [SwaggerResponse(statusCode:403, description: "Forbidden")]
-    [SwaggerResponse(statusCode:404, description: "Not Found", Type = typeof(Response))]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
     [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]    public async Task<IActionResult> DeleteByIdAsync(Guid id)
     {
         var userId = Guid.Empty;

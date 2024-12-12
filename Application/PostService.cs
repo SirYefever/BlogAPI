@@ -2,6 +2,7 @@ using API.Dto;
 using Core.InterfaceContracts;
 using Core.Models;
 using Core.ServiceContracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Application;
 
@@ -36,14 +37,14 @@ public class PostService: IPostService
 
     public async Task<Post> CreatePost(Post post)
     {
-        var postCreator = await _userRepository.GetById(post.AuthorId);
-        post.Author = postCreator.FullName;
         await _postRepository.Add(post);
-        if (post.CommunityId.HasValue)
-        {
-            var communityPost = new CommunityPost((Guid)post.CommunityId, post.Id);
-            await _communityPostRepository.CreateAsync(communityPost);
-        }
+        if (!post.CommunityId.HasValue)
+            return post;
+        
+        await _userCommunityRepository.ConfirmUserBelongsToClosedCommunity((Guid)post.CommunityId, post.AuthorId);
+        
+        var communityPost = new CommunityPost((Guid)post.CommunityId, post.Id);
+        await _communityPostRepository.CreateAsync(communityPost);
         return post;
     }
 

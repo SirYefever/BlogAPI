@@ -1,6 +1,6 @@
 namespace API.Dto;
 
-public class UserCommunityNoRole
+public class UserCommunityNoRole //TODO: Delete?
 {
     public UserCommunityNoRole(Guid communityId, Guid userId)
     {

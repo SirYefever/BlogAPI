@@ -8,8 +8,7 @@ public interface ICommunityService
     Task<Community> CreateCommunityAsync(Community community);
     Task<Community> GetCommunityById(Guid communityId);
     Task<List<Community>> GetCommunities();
-    Task<Community> UpdateCommunity(Guid communityToUpdateId, Community newCommunity);
-    Task DeleteCommunity(Guid communityToDeleteId);
-    Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request);
+    Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request, Guid userId);
     public Task<int> GetSubscriberCountByCommunityId(Guid communityId);
+    Task<int> GetPostQuantity(Guid communityId);
 }

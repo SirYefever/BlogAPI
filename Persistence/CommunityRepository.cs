@@ -2,6 +2,8 @@ using System.Linq.Expressions;
 using API.Dto;
 using Core.InterfaceContracts;
 using Core.Models;
+using Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,6 +16,7 @@ public class CommunityRepository: ICommunityRepository
     {
         _context = context;
     }
+    
     public async Task<Community> Add(Community community)
     {
         _context.Communities.Add(community);
@@ -23,12 +26,11 @@ public class CommunityRepository: ICommunityRepository
 
     public async Task<Community> GetById(Guid id)
     {
-        var community = await _context.Communities.SingleOrDefaultAsync(c => c.Id == id);
+        var community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == id);
+        
         if (community == null)
-        {
-            //TODO: figure out how to handle this case
-            throw new ArgumentException("Community not found");
-        }
+            throw new KeyNotFoundException("Community id=" + id.ToString() + " not found in database.");
+        
         return community;
     }
 
@@ -37,29 +39,24 @@ public class CommunityRepository: ICommunityRepository
         return await _context.Communities.ToListAsync();
     }
 
-    public Task<Community> UpdateById(Guid id, Community newCommunity)
+    public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request, List<PostLike> likes, Guid userId)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteById(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<List<Post>> GetPostsOfCommunity(CommunityPostListRequest request, List<PostLike> likes)
-    {
+        var community = await _context.Communities.FirstOrDefaultAsync(x => x.Id == request.CommunityId);
+        
+        if (community.IsClosed && await _context.UserCommunity.AnyAsync(x => x.CommunityId == community.Id && x.UserId == userId))
+            throw new ForbiddenException("User id=" + userId.ToString() + "does not belong to closed community id=" + community.Id.ToString());
+        
+        if (community == null)
+            throw new KeyNotFoundException("Community with id=" + request.CommunityId.ToString() + " not found in database");
+        
         var posts = _context.Posts.AsQueryable();
         
-        if (!string.IsNullOrWhiteSpace(request.CommunityId.ToString()))
-        {
-            posts = posts.Where(p => p.CommunityId == request.CommunityId);
-        }
+        posts = posts.Where(p => p.CommunityId == request.CommunityId);
 
-        if (request.TagGuids != null && request.TagGuids.Any())        {
+        if (request.TagGuids != null && request.TagGuids.Any()) {
             var postTags = _context.PostTag.AsQueryable();
             var postTagsFiltered = postTags.Where(pt => request.TagGuids.Contains(pt.TagId));
-            var availablePostIds = postTagsFiltered.Select(pt => pt.PostId).ToList();
+            var availablePostIds = await postTagsFiltered.Select(pt => pt.PostId).ToListAsync();
             posts = posts.Where(p => availablePostIds.Contains(p.Id));
         }
         
@@ -77,17 +74,22 @@ public class CommunityRepository: ICommunityRepository
                 posts = posts.OrderByDescending(keySelector);
             else
                 posts = posts.OrderBy(keySelector);
-            
-            if (request.PageSize.HasValue)
-            {
-                posts = posts.Take(request.PageSize.Value);
-            }
-
-            if (request.Page.HasValue)
-            {
-                posts = posts.Skip((int)(request.PageSize.Value * (request.Page.Value - 1)));
-            }
         }
+        
+        if (request.PageSize.HasValue)
+            posts = posts.Take(request.PageSize.Value);
+
+        if (request.Page.HasValue)
+            posts = posts.Skip((int)(request.PageSize.Value * (request.Page.Value - 1)));
+        
         return await posts.ToListAsync();
+    }
+
+    public async Task<int> GetPostQuantity(Guid communityId)
+    {
+        if (! await _context.Communities.AnyAsync(c => c.Id == communityId))
+            throw new KeyNotFoundException("Community with id=" + communityId.ToString() + " not found in database");
+        
+        return await _context.Posts.CountAsync(p => p.CommunityId == communityId);
     }
 }
