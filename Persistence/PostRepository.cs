@@ -3,6 +3,7 @@ using API.Dto;
 using Azure.Core;
 using Core.InterfaceContracts;
 using Core.Models;
+using Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
@@ -15,7 +16,11 @@ public class PostRepository: IPostRepository
         _context = context;
     }
     public async Task<Post> Add(Post post)
-    {//TODO: figure out weather this needs to be wrapped with try catch
+    {
+        if (!await _context.UserCommunity.AnyAsync(x => x.CommunityId == post.CommunityId && x.UserId == post.AuthorId))
+            throw new ForbiddenException(
+                "User id=" + post.AuthorId + " is not able to post in community id=" + post.CommunityId);
+        
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
         return post;

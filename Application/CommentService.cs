@@ -23,14 +23,14 @@ public class CommentService: ICommentService
         return comment;
     }
 
-    public async Task UpdateCommentAsync(Guid oldCommentId, string newContent)
+    public async Task UpdateCommentAsync(Guid oldCommentId, string newContent, Guid userId)
     {
-        await _commentRepository.UpdateAsync(oldCommentId, newContent);
+        await _commentRepository.UpdateAsync(oldCommentId, newContent, userId);
     }
 
-    public async Task DeleteCommentAsync(Guid commentId)
+    public async Task DeleteCommentAsync(Guid commentId, Guid userId)
     {
-        await _commentRepository.DeleteAsync(commentId);
+        await _commentRepository.DeleteAsync(commentId, userId);
     }
 
     public Task<Comment> GetCommentAsync(Guid commentId)

@@ -9,7 +9,7 @@ public interface ICommentRepository
     public Task<List<Comment>> GetByIdsAsync(List<Guid> ids);
     public Task IncrementSubCommentsCount(Guid commentId);
     public Task<List<Comment>> GetRepliesByIdAsync(Guid commentId);
-    Task UpdateAsync(Guid commentId, string newContent);
-    Task DeleteAsync(Guid commentId);
+    Task UpdateAsync(Guid commentId, string newContent, Guid userId);
+    Task DeleteAsync(Guid commentId, Guid userId);
     Task<List<Comment>> GetCommentsByPostId(Guid postId);
 }

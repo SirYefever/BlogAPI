@@ -23,40 +23,33 @@ public class CommentController: ControllerBase
     }
 
     [SwaggerOperation("Get all nested comments(replies)")]
+    [AllowAnonymous]
     [HttpGet("api/comment/{id}/tree")]
-    [ProducesResponseType(typeof(List<CommentDto>),StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(Response),StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(List<CommentDto>))]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> GetReplies(Guid id)
     {
         List<Comment> replies = new List<Comment>();
-        try
-        {
-            replies = await _commentService.GetReplies(id);
-        }
-        catch
-        {
-            return StatusCode(500, new Response("An internal server error occurred.",
-                "Failed to get replies."));
-        }
+        replies = await _commentService.GetReplies(id);
         var repliesDto = replies.Select(r => new CommentDto(r));
         return Ok(repliesDto);
     }
 
     [SwaggerOperation("Add a comment to a concrete post")]
     [HttpPost("api/post/{id}/comment")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> AddCommentToPost(Guid id, [FromBody]CreateCommentDto createCommentDto)
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(CreateCommentDto))]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:403, description: "Forbidden")]
+    [SwaggerResponse(statusCode:404, description: "Not Found", Type = typeof(Response))]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
+    public async Task<IActionResult> AddCommentToPost(Guid id, [FromBody]CreateCommentDto model)
     {
         var userId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
-        var comment = CommentConverter.CreateCommentDtoToComment(createCommentDto);
+        var comment = CommentConverter.CreateCommentDtoToComment(model);
         comment.AuthorId = userId;
         comment.Author = HttpContext.User.Identity.Name;
         comment.CreateTime = DateTime.UtcNow;
@@ -67,26 +60,29 @@ public class CommentController: ControllerBase
 
     [SwaggerOperation("Edit concrete comment")]
     [HttpPut("api/comment/{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> EditByIdAsync(Guid id, string content)
+    [SwaggerResponse(statusCode: 200, description: "Success")]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
+    public async Task<IActionResult> EditByIdAsync(Guid id, [FromBody]UpdateCommentDto dto)
     {
-        await _commentService.UpdateCommentAsync(id, content);
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        await _commentService.UpdateCommentAsync(id, dto.Content, userId);
         return Ok();
     }
 
     [SwaggerOperation("Delete concrete comment")]
     [HttpDelete("api/comment/{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteByIdAsync(Guid id, string content)
+    [SwaggerResponse(statusCode: 200, description: "Success")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:403, description: "Forbidden")]
+    [SwaggerResponse(statusCode:404, description: "Not Found", Type = typeof(Response))]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]    public async Task<IActionResult> DeleteByIdAsync(Guid id)
     {
-        await _commentService.DeleteCommentAsync(id);
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        await _commentService.DeleteCommentAsync(id, userId);
         return Ok();
     }
 }

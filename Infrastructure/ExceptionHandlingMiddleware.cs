@@ -1,6 +1,8 @@
 using System.Net;
 using Core.Models;
+using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -9,19 +11,17 @@ namespace Infrastructure;
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
-        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context); // Call the next middleware in the pipeline
+            await _next(context);
         }
         catch (Exception ex)
         {
@@ -33,12 +33,26 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-        var response = new ProblemDetails
+        var statusCode = "Error";
+        var message = "Unhandled exception occured.";
+        switch(exception)
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "Server Error"
-        };
+            case KeyNotFoundException:
+                message = exception.Message;
+                break;
+            case UnauthorizedAccessException:
+                statusCode = HttpStatusCode.Unauthorized.ToString();
+                message = exception.Message;
+                break;
+            case ForbiddenException:
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                message = exception.Message;
+                break;
+        }
+
+        var response = new Response(statusCode.ToString(), message);
 
         await context.Response.WriteAsJsonAsync(response);
-    }}
+    }
+    
+}
