@@ -19,10 +19,14 @@ public class AuthorRepository: IAuthorRepository
         var posts = await _context.Posts.ToListAsync();
         foreach (var post in posts)
         {
-            var authorOfPost = authors.SingleOrDefault(x => x.Id == post.AuthorId);
+            var authorOfPost = authors.FirstOrDefault(x => x.Id == post.AuthorId);
             if (authorOfPost == null)
             {
                 var authorAsUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == post.AuthorId);
+                
+                if (authorAsUser == null)
+                    continue;
+                
                 var newAuthor = new Author(post, authorAsUser);
                 authors.Add(newAuthor);
             }

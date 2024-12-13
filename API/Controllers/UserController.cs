@@ -52,7 +52,7 @@ public class UserController: ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(PostPagesListDto))]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(TokenResponse))]
     [SwaggerResponse(statusCode:400, description: "BadRequest")]
     [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     [HttpPost("api/account/login")]

@@ -110,20 +110,7 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTkzNWRhZC03YWU4LTdiNjEtYjQzMC01Y2E5NjIzNGZkZjQiLCJleHAiOjE3MzI1NDQ3NDZ9.sGlihWp0iTf1ucMKIc-Bg9l2PW3S_kwPujQ82bvrWNU\"",
     });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
-        {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-    var xmlFile = "PowerBiApiService.xml";
-    var xmlPath = "E:/dev/BlogAPI/API/bin/Debug/netcoreapp1.1/" + xmlFile;
-    options.IncludeXmlComments(xmlPath);
+    options.OperationFilter<AuthResponsesOperationFilter>();
 });
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtSettings"));
 var jwtOptions = builder.Configuration.GetSection("JwtSettings").Get<JwtOptions>();

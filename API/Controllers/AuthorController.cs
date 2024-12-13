@@ -24,31 +24,22 @@ public class AuthorController: ControllerBase
 
     [SwaggerOperation("Get all authors")]
     [HttpGet("api/author/list")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<AuthorDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAuthors()
     {
         List<Author> authors = new List<Author>();
-        try
-        {
-            authors = await _authorService.GetAllAsync();
-        }
-        catch
-        {
-            return StatusCode(500, new Response("An internal server error occurred", "Failed to get authors list."));
-        }
+        authors = await _authorService.GetAllAsync();
 
         var authorDtos = new List<AuthorDto>();
         foreach (var author in authors)
         {
-            try
-            {
-                authorDtos.Add(await _authorConverters.AuthorToAuthorDto(author));
-            }
-            catch
-            {
-                return StatusCode(500, new Response("An internal server error occurred", "Failed to convert entity into dto."));
-            }
+            authorDtos.Add(await _authorConverters.AuthorToAuthorDto(author));
+            // catch
+            // {
+            //     return StatusCode(500, new Response("An internal server error occurred", "Failed to convert entity into dto."));
+            // }
         }
 
         return Ok(authorDtos);

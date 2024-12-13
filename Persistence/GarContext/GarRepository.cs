@@ -32,12 +32,15 @@ public class GarRepository: IGarRepository
             return _garConverter.GetTomskRegion();
         
         var addresses = _context.AsAddrObj.AsQueryable();
-        AsAddrObj searchedAddress = addresses.Where(
-            a => a.Objectguid == objectGuid
-        ).ToList()[0]; //TODO: manage UTC thing
         
-        if (searchedAddress == null)
-            throw new KeyNotFoundException("Address with id=" + objectGuid.ToString() + "not found in database.");
+        var addressList = await addresses.Where(
+            a => a.Objectguid == objectGuid
+        ).ToListAsync();
+
+        if (addressList.Count == 0)
+            return null;
+        
+        AsAddrObj searchedAddress = addressList[0];
             
         return searchedAddress;
     }
@@ -97,7 +100,6 @@ public class GarRepository: IGarRepository
     {
         var _garConverter = new GarConverter();
         long parentId = 0;
-        if (objectId == _tomskCityId)
             
         try
         {
