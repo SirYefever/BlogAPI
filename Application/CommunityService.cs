@@ -5,13 +5,14 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class CommunityService: ICommunityService
+public class CommunityService : ICommunityService
 {
     private readonly ICommunityRepository _communityRepository;
-    private readonly IUserCommunityRepository _userCommunityRepository;
     private readonly IPostLikeRepository _postLikeRepository;
+    private readonly IUserCommunityRepository _userCommunityRepository;
 
-    public CommunityService(ICommunityRepository communityRepository, IUserCommunityRepository userCommunityRepository, IPostLikeRepository postLikeRepository)
+    public CommunityService(ICommunityRepository communityRepository, IUserCommunityRepository userCommunityRepository,
+        IPostLikeRepository postLikeRepository)
     {
         _communityRepository = communityRepository;
         _userCommunityRepository = userCommunityRepository;

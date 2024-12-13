@@ -6,10 +6,10 @@ namespace API.Controllers;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "Addresses")]
-public class AddressController: ControllerBase
+public class AddressController : ControllerBase
 {
     private readonly IGarService _garService;
-    
+
     public AddressController(IGarService garService)
     {
         _garService = garService;
@@ -34,5 +34,4 @@ public class AddressController: ControllerBase
         var result = await _garService.GetAddressChainAsync(objectGuid);
         return Ok(result);
     }
-    
 }

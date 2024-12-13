@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace API.Filters;
 
-public class GetPosts: Attribute, IActionFilter
+public class GetPosts : Attribute, IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {

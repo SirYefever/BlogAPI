@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class UserCommunityRepository: IUserCommunityRepository
+public class UserCommunityRepository : IUserCommunityRepository
 {
     private readonly MainDbContext _context;
 
@@ -16,9 +16,9 @@ public class UserCommunityRepository: IUserCommunityRepository
 
     public async Task<UserCommunity> CreateAsync(UserCommunity userCommunity)
     {
-        if (!await _context.Communities.AnyAsync(c=>c.Id == userCommunity.CommunityId))
+        if (!await _context.Communities.AnyAsync(c => c.Id == userCommunity.CommunityId))
             throw new KeyNotFoundException("Community id=" + userCommunity.CommunityId + " not found in database.");
-        
+
         _context.UserCommunity.Add(userCommunity);
         await _context.SaveChangesAsync();
         return userCommunity;
@@ -39,15 +39,16 @@ public class UserCommunityRepository: IUserCommunityRepository
 
     public async Task DeleteByIds(Guid communityId, Guid userId)
     {
-        if (!await _context.Communities.AnyAsync(c=>c.Id == communityId))
+        if (!await _context.Communities.AnyAsync(c => c.Id == communityId))
             throw new KeyNotFoundException("Community id=" + communityId + " not found in database.");
-        
+
         var userCommunityToDelete = await _context.UserCommunity.FirstOrDefaultAsync(uc =>
             uc.UserId == userId && uc.CommunityId == communityId);
-        
+
         if (userCommunityToDelete == null)
-            throw new KeyNotFoundException("User id=" + userId + " does not belong to community id=" + communityId + ".");
-        
+            throw new KeyNotFoundException(
+                "User id=" + userId + " does not belong to community id=" + communityId + ".");
+
         _context.UserCommunity.Remove(userCommunityToDelete);
         await _context.SaveChangesAsync();
     }
@@ -62,39 +63,39 @@ public class UserCommunityRepository: IUserCommunityRepository
     {
         if (!await _context.Communities.AnyAsync(x => x.Id == communityId))
             throw new KeyNotFoundException("Community id=" + communityId + " not found in database");
-        
+
         var userCommunity =
-            await _context.UserCommunity.FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CommunityId == communityId);
-            
+            await _context.UserCommunity.FirstOrDefaultAsync(uc =>
+                uc.UserId == userId && uc.CommunityId == communityId);
+
         if (userCommunity == null)
-            throw new KeyNotFoundException("User id=" + userId.ToString() + "does not belong to community id=" + communityId.ToString());
-            
+            throw new KeyNotFoundException("User id=" + userId + "does not belong to community id=" + communityId);
+
         return userCommunity.HighestRole;
     }
 
     public async Task ConfirmUserBelongsToClosedCommunity(Guid communityId, Guid userId)
     {
         var community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == communityId);
-        
+
         if (community == null)
-            throw new KeyNotFoundException("Community id=" + communityId.ToString() + " not found in database.");
-        
-        if (! await _context.UserCommunity.AnyAsync(uc => uc.UserId == userId && uc.CommunityId == communityId) && 
+            throw new KeyNotFoundException("Community id=" + communityId + " not found in database.");
+
+        if (!await _context.UserCommunity.AnyAsync(uc => uc.UserId == userId && uc.CommunityId == communityId) &&
             community.IsClosed)
-            throw new ForbiddenException("User id=" + userId.ToString() + "does not belong to closed community id="+ communityId.ToString());
+            throw new ForbiddenException("User id=" + userId + "does not belong to closed community id=" + communityId);
     }
 
     public async Task<bool> IsUserInCommunity(Guid communityId, Guid userId)
     {
-        
         var community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == communityId);
-        
+
         if (community == null)
-            throw new KeyNotFoundException("Community id=" + communityId.ToString() + " not found in database.");
+            throw new KeyNotFoundException("Community id=" + communityId + " not found in database.");
 
         if (!await _context.UserCommunity.AnyAsync(uc => uc.UserId == userId && uc.CommunityId == communityId))
             return false;
-        
+
         return true;
     }
 }

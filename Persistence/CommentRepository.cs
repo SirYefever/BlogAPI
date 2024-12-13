@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.ComTypes;
 using Core.InterfaceContracts;
 using Core.Models;
 using Infrastructure.Exceptions;
@@ -6,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class CommentRepository: ICommentRepository
+public class CommentRepository : ICommentRepository
 {
-
     private readonly MainDbContext _context;
 
     public CommentRepository(MainDbContext context)
@@ -21,21 +19,22 @@ public class CommentRepository: ICommentRepository
         comment.postId = postId;
 
         if (comment.ParentId != null && !await _context.Comment.AnyAsync(x => x.Id == comment.ParentId))
-            throw new KeyNotFoundException("Comment with id=" + comment.ParentId.ToString() + " not found in database");
+            throw new KeyNotFoundException("Comment with id=" + comment.ParentId + " not found in database");
 
         if (!await _context.Posts.AnyAsync(x => x.Id == postId))
-            throw new KeyNotFoundException("Post with id=" + postId.ToString() + " not found in database");
+            throw new KeyNotFoundException("Post with id=" + postId + " not found in database");
 
         var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == postId);
         post.CommentsCount++;
         if (post == null)
-            throw new KeyNotFoundException("Post with id=" + postId.ToString() + " not found in database");
+            throw new KeyNotFoundException("Post with id=" + postId + " not found in database");
 
         var community = await _context.Communities.FirstOrDefaultAsync(x => x.Id == post.CommunityId);
         if (community != null)
             if (!await _context.UserCommunity.AnyAsync(x =>
                     x.CommunityId == post.CommunityId && x.UserId == comment.AuthorId && community.IsClosed))
-                throw new ForbiddenException("Access to closed community post with id=" + post.Id + " is forbidden for user id=" + comment.AuthorId);
+                throw new ForbiddenException("Access to closed community post with id=" + post.Id +
+                                             " is forbidden for user id=" + comment.AuthorId);
 
         await _context.Comment.AddAsync(comment);
         await _context.SaveChangesAsync();
@@ -56,7 +55,7 @@ public class CommentRepository: ICommentRepository
 
     public async Task IncrementSubCommentsCount(Guid commentId)
     {
-       var comment = await _context.Comment.FirstAsync(c => c.Id == commentId);
+        var comment = await _context.Comment.FirstAsync(c => c.Id == commentId);
         comment.SubComments++;
         await _context.SaveChangesAsync();
     }
@@ -64,7 +63,7 @@ public class CommentRepository: ICommentRepository
     public async Task<List<Comment>> GetRepliesByIdAsync(Guid commentId)
     {
         if (!await _context.Comment.AnyAsync(c => c.Id == commentId))
-            throw new KeyNotFoundException("Comment with id=" + commentId.ToString() + "  not found in  database");
+            throw new KeyNotFoundException("Comment with id=" + commentId + "  not found in  database");
         var replies = await _context.Comment.Where(c => c.ParentId == commentId).ToListAsync();
         return replies;
     }
@@ -73,11 +72,11 @@ public class CommentRepository: ICommentRepository
     {
         var comment = await _context.Comment.FirstOrDefaultAsync(c => c.Id == commentId);
         if (comment == null)
-            throw new KeyNotFoundException("Comment with id=" + commentId.ToString() + " not found in database");
+            throw new KeyNotFoundException("Comment with id=" + commentId + " not found in database");
 
         if (comment.AuthorId != userId)
             throw new ForbiddenException("The user with id=" + userId + " is not the author of the comment");
-        
+
         comment.Content = newContent;
         comment.ModifiedDate = DateTime.UtcNow;
         await _context.SaveChangesAsync();
@@ -85,14 +84,14 @@ public class CommentRepository: ICommentRepository
 
     public async Task DeleteAsync(Guid commentId, Guid userId)
     {
-        var comment = await _context.Comment.FirstOrDefaultAsync(c => c.Id == commentId); 
-        
+        var comment = await _context.Comment.FirstOrDefaultAsync(c => c.Id == commentId);
+
         if (comment == null)
-            throw new KeyNotFoundException("Comment with id=" + commentId.ToString() + " not found in database");
-        
+            throw new KeyNotFoundException("Comment with id=" + commentId + " not found in database");
+
         if (comment.AuthorId != userId)
             throw new ForbiddenException("The user with id=" + userId + " is not the author of the comment");
-        
+
         var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == comment.postId);
         post.CommentsCount--;
         comment.Content = "";

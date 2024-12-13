@@ -3,7 +3,7 @@ using Core.Models;
 
 namespace Persistence;
 
-public class CommunityPostRepository: ICommunityPostRepository
+public class CommunityPostRepository : ICommunityPostRepository
 {
     private readonly MainDbContext _context;
 

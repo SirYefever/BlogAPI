@@ -18,5 +18,5 @@ public enum GarAddressLevel
     IntracityLevel,
     AdditionalTerritoriesLevel,
     LevelOfObjectsInAdditionalTerritories,
-    CarPlace 
+    CarPlace
 }

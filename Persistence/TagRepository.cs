@@ -4,19 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class TagRepository: ITagRepository
+public class TagRepository : ITagRepository
 {
-    private readonly MainDbContext _context; 
+    private readonly MainDbContext _context;
+
     public TagRepository(MainDbContext context)
     {
         _context = context;
     }
-    
+
     public async Task Add(Tag tag)
     {
         if (await _context.Tags.AnyAsync(x => x.Name == tag.Name))
             return;
-            
+
         _context.Tags.Add(tag);
         await _context.SaveChangesAsync();
     }

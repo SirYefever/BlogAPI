@@ -11,6 +11,7 @@ public class Author
         Gender = user.Gender;
         BirthDate = user.BirthDate;
     }
+
     public Guid Id { get; set; }
     public string FullName { get; set; }
     public DateTime? BirthDate { get; set; }

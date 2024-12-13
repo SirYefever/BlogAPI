@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class PostTagRepository: IPostTagRepository
+public class PostTagRepository : IPostTagRepository
 {
     private readonly MainDbContext _context;
 
@@ -36,7 +36,7 @@ public class PostTagRepository: IPostTagRepository
     {
         throw new NotImplementedException();
     }
-    
+
     public async Task ConfirmTagExists(Guid id)
     {
         if (!await _context.Tags.AnyAsync(x => x.Id == id))
@@ -47,11 +47,11 @@ public class PostTagRepository: IPostTagRepository
     {
         if (tagGuids.Count == 0)
             throw new BadRequestException("Specify at least one tag for a new post");
-        
+
         foreach (var guid in tagGuids)
         {
             await ConfirmTagExists(guid);
             await CreateAsync(new PostTag(postId, guid));
-        }   
+        }
     }
 }

@@ -1,13 +1,13 @@
 namespace Infrastructure.Exceptions;
 
-public class BadRequestException: Exception
+public class BadRequestException : Exception
 {
-    public BadRequestException() 
+    public BadRequestException()
         : base("Bad Request.")
     {
     }
 
-    public BadRequestException(string message) 
+    public BadRequestException(string message)
         : base(message)
     {
     }

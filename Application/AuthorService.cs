@@ -4,7 +4,7 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class AuthorService: IAuthorService
+public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
 

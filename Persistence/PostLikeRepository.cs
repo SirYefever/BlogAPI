@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class PostLikeRepository: IPostLikeRepository
+public class PostLikeRepository : IPostLikeRepository
 {
     private readonly MainDbContext _context;
 
@@ -17,21 +17,23 @@ public class PostLikeRepository: IPostLikeRepository
     {
         return await _context.PostLike.ToListAsync();
     }
+
     public async Task AddAsync(PostLike postLike)
     {
-        if (!await _context.Posts.AnyAsync(x => x.Id == postLike.PostId)) 
+        if (!await _context.Posts.AnyAsync(x => x.Id == postLike.PostId))
             throw new KeyNotFoundException("Post id=" + postLike.PostId + " not found in database.");
-        
+
         _context.PostLike.Add(postLike);
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid postId, Guid userId)
     {
-        var postLike = await _context.PostLike.FirstOrDefaultAsync(x=> x.PostId == postId && x.UserWhoLikedId == userId);
+        var postLike =
+            await _context.PostLike.FirstOrDefaultAsync(x => x.PostId == postId && x.UserWhoLikedId == userId);
         if (postLike == null)
             throw new KeyNotFoundException("There is no like for this post by user.");
-        
+
         _context.PostLike.Remove(postLike);
         await _context.SaveChangesAsync();
     }

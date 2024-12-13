@@ -1,11 +1,7 @@
-using System.Security.Cryptography;
-using BCrypt.Net;
 using Application.Auth;
 using Infrastructure.Exceptions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure;
-
 
 public class PasswordHasher : IPasswordHasher
 {
@@ -17,9 +13,9 @@ public class PasswordHasher : IPasswordHasher
     public bool Verify(string password, string hashedPassword)
     {
         return BCrypt.Net.BCrypt.EnhancedVerify(
-            text: password,
-            hash: hashedPassword
-            );
+            password,
+            hashedPassword
+        );
     }
 
     public void ConfirmLogging(string password, string hashedPassword)

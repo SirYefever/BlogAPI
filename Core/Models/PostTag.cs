@@ -9,9 +9,8 @@ public class PostTag
         PostId = postId;
         TagId = tagId;
     }
-    [ForeignKey("Post")]
-    public Guid PostId { get; set; }
-    [ForeignKey("Tag")]
-    public Guid TagId { get; set; }
-    
+
+    [ForeignKey("Post")] public Guid PostId { get; set; }
+
+    [ForeignKey("Tag")] public Guid TagId { get; set; }
 }

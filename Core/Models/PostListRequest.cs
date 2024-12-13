@@ -1,9 +1,8 @@
 using API.Dto;
-using Core.Models;
 
 namespace Core.Models;
 
-public class PostListRequest//TODO: figure out weather it's supposed to be in Core
+public class PostListRequest
 {
     public PostListRequest(List<Guid>? tags, string? author, int? min, int? max, PostSorting? sorting,
         bool onlyMyCommunities, int? page, int? size)
@@ -17,6 +16,7 @@ public class PostListRequest//TODO: figure out weather it's supposed to be in Co
         Page = page;
         PageSize = size;
     }
+
     public List<Guid>? Tags { get; set; }
     public string? PartOfAuthorName { get; set; }
     public int? MinReadingTime { get; set; }
@@ -24,5 +24,5 @@ public class PostListRequest//TODO: figure out weather it's supposed to be in Co
     public PostSorting? Sorting { get; set; }
     public bool OnlyMyCommunities { get; set; }
     public int? Page { get; set; } = 1;
-    public int? PageSize { get; set; } = 5; 
+    public int? PageSize { get; set; } = 5;
 }

@@ -4,7 +4,7 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class UserCommunityService: IUserCommunityService
+public class UserCommunityService : IUserCommunityService
 {
     private readonly IUserCommunityRepository _userCommunityRepository;
 

@@ -4,7 +4,7 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class CommentService: ICommentService
+public class CommentService : ICommentService
 {
     private readonly ICommentRepository _commentRepository;
 
@@ -16,10 +16,7 @@ public class CommentService: ICommentService
     public async Task<Comment> CreateCommentAsync(Guid postId, Comment comment)
     {
         await _commentRepository.AddAsync(postId, comment);
-        if (comment.ParentId != null)
-        {
-            await _commentRepository.IncrementSubCommentsCount((Guid)comment.ParentId);
-        }
+        if (comment.ParentId != null) await _commentRepository.IncrementSubCommentsCount((Guid)comment.ParentId);
         return comment;
     }
 

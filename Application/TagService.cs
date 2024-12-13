@@ -4,7 +4,7 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class TagService: ITagService
+public class TagService : ITagService
 {
     private readonly ITagRepository _tagRepository;
 
@@ -26,14 +26,7 @@ public class TagService: ITagService
 
     public async Task<Tag> CreateTag(Tag tag)
     {
-        try
-        {
-            await _tagRepository.Add(tag);
-        }
-        catch
-        {
-            throw;
-        }
+        await _tagRepository.Add(tag);
         return tag;
     }
 
@@ -48,13 +41,13 @@ public class TagService: ITagService
         Tag newTag;
         if (tag == null)
         {
-            //TODO: figure out weather it's needed to create new Tag instance here
             newTag = new Tag();
             newTag.Name = name;
             newTag.CreateTime = DateTime.UtcNow;
             await _tagRepository.Add(newTag);
             return newTag;
         }
+
         return tag;
     }
 }

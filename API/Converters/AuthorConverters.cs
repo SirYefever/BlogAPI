@@ -1,7 +1,6 @@
 using API.Dto;
 using Core.InterfaceContracts;
 using Core.Models;
-using Persistence;
 
 namespace API.Converters;
 

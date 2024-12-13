@@ -11,15 +11,18 @@ public class AuthResponsesOperationFilter : IOperationFilter
         var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
             .Union(context.MethodInfo.GetCustomAttributes(true))
             .OfType<AuthorizeAttribute>();
+        
+        var allowAnonymous = context.MethodInfo.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Any();
 
         if (authAttributes.Any())
         {
-            var securityRequirement = new OpenApiSecurityRequirement()
+            var securityRequirement = new OpenApiSecurityRequirement
             {
                 {
                     new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference {
+                        Reference = new OpenApiReference
+                        {
                             Type = ReferenceType.SecurityScheme,
                             Id = "Bearer"
                         }
@@ -28,7 +31,8 @@ public class AuthResponsesOperationFilter : IOperationFilter
                 }
             };
             operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
-            // operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+            if (allowAnonymous)
+                operation.Security.Clear();
         }
     }
 }

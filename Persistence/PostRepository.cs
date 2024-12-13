@@ -1,28 +1,26 @@
 using System.Linq.Expressions;
-using API.Dto;
-using Azure.Core;
 using Core.InterfaceContracts;
 using Core.Models;
 using Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Persistence.GarContext;
 
 namespace Persistence;
 
-public class PostRepository: IPostRepository
+public class PostRepository : IPostRepository
 {
-    private readonly MainDbContext _context; 
+    private readonly MainDbContext _context;
+
     public PostRepository(MainDbContext context)
     {
         _context = context;
     }
+
     public async Task<Post> Add(Post post)
     {
         if (!await _context.UserCommunity.AnyAsync(x => x.CommunityId == post.CommunityId && x.UserId == post.AuthorId))
             throw new ForbiddenException(
                 "User id=" + post.AuthorId + " is not able to post in community id=" + post.CommunityId);
-        
+
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
         return post;
@@ -33,6 +31,7 @@ public class PostRepository: IPostRepository
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
     }
+
     public async Task<Post> GetById(Guid id, Guid userId)
     {
         var post = await _context.Posts.FirstOrDefaultAsync(post => post.Id == id);
@@ -43,21 +42,23 @@ public class PostRepository: IPostRepository
         {
             var community = await _context.Communities.FirstOrDefaultAsync(x => x.Id == post.CommunityId);
             if (community == null)
-                throw new KeyNotFoundException("Community id=" + post.CommunityId + " does not exist in database anymore.");
-            if (community.IsClosed && !await _context.UserCommunity.AnyAsync(x => x.CommunityId == community.Id && x.UserId == userId))
-                throw new ForbiddenException("User id=" + userId.ToString() + "does not belong to closed community id=" + community.Id.ToString());
+                throw new KeyNotFoundException("Community id=" + post.CommunityId +
+                                               " does not exist in database anymore.");
+            if (community.IsClosed &&
+                !await _context.UserCommunity.AnyAsync(x => x.CommunityId == community.Id && x.UserId == userId))
+                throw new ForbiddenException("User id=" + userId + "does not belong to closed community id=" +
+                                             community.Id);
         }
-        
+
         return post;
     }
 
     public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId, List<PostLike> postLikes,
         List<UserCommunity> curUserCommunities = null)
-    {//TODO: figure out why nothing is awaitable here
-        
+    {
         var posts = _context.Posts.AsQueryable();
 
-        
+
         if (request.OnlyMyCommunities)
         {
             var availableCommunities = curUserCommunities.Select(uc => uc.CommunityId).ToList();
@@ -65,19 +66,11 @@ public class PostRepository: IPostRepository
         }
 
         if (!string.IsNullOrWhiteSpace(request.PartOfAuthorName))
-        {
             posts = posts.Where(p => p.Author.Contains(request.PartOfAuthorName));
-        }
 
-        if (request.MinReadingTime.HasValue)
-        {
-            posts = posts.Where(p => p.ReadingTime > request.MinReadingTime.Value);
-        }
+        if (request.MinReadingTime.HasValue) posts = posts.Where(p => p.ReadingTime > request.MinReadingTime.Value);
 
-        if (request.MaxReadingTime.HasValue)
-        {
-            posts = posts.Where(p => p.ReadingTime < request.MaxReadingTime.Value);
-        }
+        if (request.MaxReadingTime.HasValue) posts = posts.Where(p => p.ReadingTime < request.MaxReadingTime.Value);
 
         if (request.Sorting.HasValue)
         {
@@ -90,15 +83,11 @@ public class PostRepository: IPostRepository
                 _ => post => post.Id
             };
             if (request.Sorting.ToString().ToLower().Contains("desc"))
-            {
                 posts = posts.OrderByDescending(keySelector);
-            }
             else
-            {
                 posts = posts.OrderBy(keySelector);
-            }
         }
-        
+
         if (request.Tags != null && request.Tags.Any())
         {
             var postTags = _context.PostTag.AsQueryable();
@@ -107,18 +96,10 @@ public class PostRepository: IPostRepository
             posts = posts.Where(p => availablePostIds.Contains(p.Id));
         }
 
-        if (request.PageSize.HasValue)
-        {
-            posts = posts.Take(request.PageSize.Value);
-        }
+        if (request.PageSize.HasValue) posts = posts.Take(request.PageSize.Value);
 
-        if (request.Page.HasValue)
-        {
-            posts = posts.Skip((int)(request.PageSize.Value * (request.Page.Value - 1)));
-        }
+        if (request.Page.HasValue) posts = posts.Skip(request.PageSize.Value * (request.Page.Value - 1));
 
         return await posts.ToListAsync();
     }
-    
-    
 }

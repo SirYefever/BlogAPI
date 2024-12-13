@@ -1,5 +1,4 @@
 using Core;
-using Core.InterfaceContracts;
 using Core.Models;
 using Core.Models.Gar;
 
@@ -7,7 +6,7 @@ namespace Persistence.GarContext;
 
 public class GarConverter
 {
-    private Dictionary<GarAddressLevel, string> _levels;
+    private readonly Dictionary<GarAddressLevel, string> _levels;
 
     public GarConverter()
     {
@@ -28,29 +27,30 @@ public class GarConverter
         _levels.Add(GarAddressLevel.IntracityLevel, "Уровень внутригородской территории (устаревшее)");
         //In task's swagger AdditionalTerritoriesLevel are mapped to "Элемент планировочной структуры" which is №7
         _levels.Add(GarAddressLevel.AdditionalTerritoriesLevel, "Уровень дополнительных территорий (устаревшее)");
-        _levels.Add(GarAddressLevel.LevelOfObjectsInAdditionalTerritories, "Уровень объектов на дополнительных территориях (устаревшее)");
+        _levels.Add(GarAddressLevel.LevelOfObjectsInAdditionalTerritories,
+            "Уровень объектов на дополнительных территориях (устаревшее)");
         _levels.Add(GarAddressLevel.CarPlace, "Машиноместо");
     }
 
     public string ConstructTextFieldForAddrObj(AsAddrObj obj)
     {
-        string result = "";
+        var result = "";
         if (obj.Typename != null)
             result += obj.Typename + " ";
-        
+
         result += obj.Name;
         return result;
     }
 
     public string ConstructTextFieldForHouse(AsHouses house)
     {
-        string result = "";
+        var result = "";
         if (house.Housenum != null)
             result = house.Housenum;
 
         if (house.Addnum2 != null)
             result += " к. " + house.Addnum2;
-        
+
         if (house.Addnum1 != null)
         {
             if (house.Addnum1 == "3")
@@ -68,24 +68,24 @@ public class GarConverter
         model.ObjectGuid = asAddrObj.Objectguid;
         model.ObjectId = asAddrObj.Objectid;
         model.Text = ConstructTextFieldForAddrObj(asAddrObj);
-        
-        
-        int.TryParse(asAddrObj.Level, out int level);
+
+
+        int.TryParse(asAddrObj.Level, out var level);
         model.ObjectLevel = (GarAddressLevel)level;
         model.ObjectLevelText = _levels[(GarAddressLevel)level];
         return model;
     }
-    
+
     public SearchAddressModel AsHousesToSearchAddressModel(AsHouses house)
     {
         var model = new SearchAddressModel();
         model.ObjectGuid = house.Objectguid;
         model.ObjectId = house.Objectid;
         model.Text = ConstructTextFieldForHouse(house);
-        
-        model.ObjectLevel = GarAddressLevel.Building;  
+
+        model.ObjectLevel = GarAddressLevel.Building;
         model.ObjectLevelText = _levels[GarAddressLevel.Building];
-        
+
         return model;
     }
 
@@ -100,7 +100,7 @@ public class GarConverter
         result.Level = "5";
         return result;
     }
-    
+
     public AsAddrObj GetTomskRegion()
     {
         var result = new AsAddrObj();

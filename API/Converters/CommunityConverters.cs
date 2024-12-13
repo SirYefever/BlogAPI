@@ -14,7 +14,7 @@ public class CommunityConverters
         community.IsClosed = dto.IsClosed;
         return community;
     }
-    
+
     public static CommunityDto CommunityToCommunityDto(Community community)
     {
         var communityDto = new CommunityDto();
@@ -25,7 +25,7 @@ public class CommunityConverters
         // communityDto.SubscribersCount = community.SubscribersCount;
         return communityDto;
     }
-    
+
     public static CommunityFullDto CommunityToCommunityFullDto(Community community)
     {
         var dto = new CommunityFullDto();

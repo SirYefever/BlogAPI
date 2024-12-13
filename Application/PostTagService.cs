@@ -4,7 +4,7 @@ using Core.ServiceContracts;
 
 namespace Application;
 
-public class PostTagService: IPostTagService
+public class PostTagService : IPostTagService
 {
     private readonly IPostTagRepository _postTagRepository;
 

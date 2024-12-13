@@ -12,9 +12,9 @@ public class UserConverters
     {
         _passwordHasher = passwordHasher;
     }
+
     public User UserDtoToUser(UserDto dto)
     {
-        //TODO: Dedicate what to do with password property
         var user = new User();
         user.FullName = dto.FullName;
         user.Email = dto.Email;
@@ -63,7 +63,6 @@ public class UserConverters
 
     public UserRegisterModel UserDtoToUserRegisterModelDto(UserDto dto)
     {
-        //TODO: Dedicate what to do with password property
         var model = new UserRegisterModel();
         model.FullName = dto.FullName;
         model.Email = dto.Email;

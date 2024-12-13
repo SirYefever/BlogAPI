@@ -1,4 +1,3 @@
-using API.Dto;
 using Core.Models;
 
 namespace Core.ServiceContracts;
@@ -10,6 +9,6 @@ public interface IPostService
     Task CreatePersonal(Post post, List<Guid> tagGuids);
     Task<Post> GetPostById(Guid id, Guid userId);
     Task LikePost(Guid postId, Guid userId);
-    Task UnlikePost(Guid postId, Guid userId);//TODO: figure out weather we need UserId for thi
+    Task UnlikePost(Guid postId, Guid userId);
     Task ParseTags(string text);
 }

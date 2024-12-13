@@ -1,6 +1,4 @@
-using System.Runtime.CompilerServices;
 using Application.Auth;
-using Application.Dto;
 using Core.InterfaceContracts;
 using Core.Models;
 using Core.ServiceContracts;
@@ -9,12 +7,13 @@ namespace Application;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly ITokenGenerator _tokenGenerator;
-    private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtProvider _jwtProvider;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly ITokenGenerator _tokenGenerator;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(IUserRepository userRepository, ITokenGenerator tokenGenerator, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
+    public UserService(IUserRepository userRepository, ITokenGenerator tokenGenerator, IPasswordHasher passwordHasher,
+        IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
         _tokenGenerator = tokenGenerator;
@@ -46,18 +45,18 @@ public class UserService : IUserService
     {
         throw new NotImplementedException();
     }
-    
+
     public async Task<string> Login(string email, string password)
     {
         var user = await _userRepository.GetByEmail(email);
-        
+
         _passwordHasher.ConfirmLogging(password, user.HashedPassword);
 
         var token = _jwtProvider.GenerateToken(user);
         var newUserData = user;
         newUserData.Token = token;
         await _userRepository.Update(user.Id, newUserData);
-        
+
         return token;
     }
 

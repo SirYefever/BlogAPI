@@ -19,5 +19,4 @@ public class CommentConverter
         var commentDto = new CommentDto(comment);
         return commentDto;
     }
-    
 }

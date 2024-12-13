@@ -1,9 +1,6 @@
-using System.Net;
 using Core.Models;
 using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure;
@@ -35,7 +32,7 @@ public class ExceptionHandlingMiddleware
         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         var statusCode = "Error";
         var message = "Unhandled exception occured.";
-        switch(exception)
+        switch (exception)
         {
             case KeyNotFoundException:
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
@@ -50,10 +47,10 @@ public class ExceptionHandlingMiddleware
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 break;
         }
+
         message = exception.Message;
-        var response = new Response(statusCode.ToString(), message);
+        var response = new Response(statusCode, message);
 
         await context.Response.WriteAsJsonAsync(response);
     }
-    
 }

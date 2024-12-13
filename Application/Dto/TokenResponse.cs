@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dto;
+
 public class TokenResponse
 {
     public TokenResponse(string token)
@@ -8,6 +9,5 @@ public class TokenResponse
         Token = token;
     }
 
-    [MinLength(1)]
-    public string Token { get; set; }
+    [MinLength(1)] public string Token { get; set; }
 }

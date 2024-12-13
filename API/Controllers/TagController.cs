@@ -10,7 +10,7 @@ namespace API.Controllers;
 [ApiController]
 [ApiExplorerSettings(GroupName = "Tags")]
 [Authorize]
-public class TagController: ControllerBase
+public class TagController : ControllerBase
 {
     public readonly ITagService _tagService;
 
@@ -22,8 +22,8 @@ public class TagController: ControllerBase
     [SwaggerOperation("Get tag list")]
     [HttpGet("api/tag")]
     [AllowAnonymous]
-    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(List<TagDto>))]
-    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
+    [SwaggerResponse(200, "Success", Type = typeof(List<TagDto>))]
+    [SwaggerResponse(500, "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> GetTagsAsync()
     {
         var tags = await _tagService.GetAllTags();

@@ -9,8 +9,8 @@ public class CommunityPost
         CommunityId = communityId;
         PostId = postId;
     }
-    [ForeignKey("Communtiy")]
-    public Guid CommunityId { get; set; }
-    [ForeignKey("Post")]
-    public Guid PostId { get; set; }
+
+    [ForeignKey("Communtiy")] public Guid CommunityId { get; set; }
+
+    [ForeignKey("Post")] public Guid PostId { get; set; }
 }
