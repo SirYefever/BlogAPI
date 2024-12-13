@@ -1,5 +1,6 @@
 using Core.InterfaceContracts;
 using Core.Models;
+using Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -14,17 +15,9 @@ public class UserRepository: IUserRepository
     }
     public async Task<User> Add(User user)
     {
-        //TODO: figure out weather db validation is supposed to be here
+        if (await _context.Users.AnyAsync(item => item.Email == user.Email))
+            throw new BadRequestException("Username" + user.Email + " is already taken.");
         
-        // Validate fullName length and phoneNumberLength 
-        
-        bool registrationAllowed = !_context.Users.Any(item => item.Email == user.Email);//TODO: figure out weather this is db validation or not
-        if (!registrationAllowed)
-        {
-            //TODO: throw exception... but in which way?
-            throw new ("Registration with there credentials is not allowed.");
-        }
-        //TODO: figure out weather next to lines have to be wrapped with try catch
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return user;
@@ -32,6 +25,10 @@ public class UserRepository: IUserRepository
 
     public async Task<User> GetById(Guid id)
     {
+        var user = await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
+        if (user == null)
+            throw new KeyNotFoundException("User id=" + id + " not found in database.");
+        
         return await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
     }
 
@@ -39,10 +36,8 @@ public class UserRepository: IUserRepository
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
         if (user == null)
-        {
-            //TODO: figure out how to handle this case
-            throw new NullReferenceException("User not found");
-        }
+            throw new KeyNotFoundException("User email=" + email + "not found in database.");
+        
         return user;
     }
 
@@ -55,6 +50,9 @@ public class UserRepository: IUserRepository
     public async Task<User> Update(Guid userToUpdateId, User newUser)
     {
         var user = _context.Users.FirstOrDefault(user => user.Id == userToUpdateId);
+        if (user == null)
+            throw new KeyNotFoundException("User id=" + userToUpdateId + " not found in database.");
+        
         _context.Entry(user).CurrentValues.SetValues(newUser);
         await _context.SaveChangesAsync();
         return user;

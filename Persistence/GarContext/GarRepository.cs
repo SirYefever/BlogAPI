@@ -14,6 +14,7 @@ public class GarRepository: IGarRepository
     private readonly long _tomskRegionId = 1281271;
     private readonly Guid _tomskCityGuid = Guid.Parse("e3b0eae8-a4ce-4779-ae04-5c0797de66be");
     private readonly long _tomskCityId = 1281284;
+    private readonly AsAddrObj _tomskCityAddrObj;
 
     public GarRepository(GarDbContext context, GarConverter garConverter)
     {
@@ -24,6 +25,12 @@ public class GarRepository: IGarRepository
     //TODO: manage awaiting in these 4 functions
     public async Task<AsAddrObj> GetAddressObjByGuidAsync(Guid objectGuid)
     {
+        if (objectGuid == _tomskCityGuid)
+            return _garConverter.GetTomskCity();
+        
+        if (objectGuid == _tomskRegionGuid)
+            return _garConverter.GetTomskRegion();
+        
         var addresses = _context.AsAddrObj.AsQueryable();
         AsAddrObj searchedAddress = addresses.Where(
             a => a.Objectguid == objectGuid
@@ -33,26 +40,25 @@ public class GarRepository: IGarRepository
             throw new KeyNotFoundException("Address with id=" + objectGuid.ToString() + "not found in database.");
             
         return searchedAddress;
-        // catch
-        // {
-        //     return null;
-        // }
     }
     
     public async Task<AsAddrObj> GetAddressObjByIdAsync(long objectId)
     {
-        try
-        {
-            var addresses = _context.AsAddrObj.AsQueryable();
-            AsAddrObj searchedAddress = addresses.Where(
-                a => a.Objectid == objectId
-            ).ToList()[0]; //TODO: manage UTC thing
-            return searchedAddress;
-        }
-        catch
-        {
-            return null;
-        }
+        if (objectId == _tomskCityId)
+            return _garConverter.GetTomskCity();
+        
+        if (objectId == _tomskRegionId)
+            return _garConverter.GetTomskRegion();
+        
+        var addresses = _context.AsAddrObj.AsQueryable();
+        
+        List<AsAddrObj> searchedAddresses = await addresses.Where(a => a.Objectid == objectId).ToListAsync();
+        
+        if (searchedAddresses.Count() == 0)
+            throw new KeyNotFoundException("Address not found in database.");
+            
+        AsAddrObj searchedAddress = searchedAddresses[0];
+        return searchedAddress;
     }
 
     public async Task<AsHouses> GetHouseByGuidAsync(Guid objectGuid)
@@ -91,6 +97,8 @@ public class GarRepository: IGarRepository
     {
         var _garConverter = new GarConverter();
         long parentId = 0;
+        if (objectId == _tomskCityId)
+            
         try
         {
             var hierarchyObjects = _context.AsAdmHierarchy.AsQueryable();
@@ -101,8 +109,6 @@ public class GarRepository: IGarRepository
         }
         catch
         {
-            // Console.Error.WriteLine(parentId);
-            // throw new Exception("Something went wrong, parentId = " + parentId);
             return null;
         }
 
@@ -141,7 +147,7 @@ public class GarRepository: IGarRepository
         chain.Add(model);
         
         var hierarchyObjects = _context.AsAdmHierarchy.AsQueryable();
-        FillAddressChain(currentId, chain);
+        await FillAddressChain(currentId, chain);
         
         return chain;
     }
@@ -157,7 +163,7 @@ public class GarRepository: IGarRepository
         var searchedModel = await GetParentObject(currentId);
         chain.Add(searchedModel);
         
-        FillAddressChain(searchedModel.ObjectId, chain);
+        await FillAddressChain(searchedModel.ObjectId, chain);
         return new List<SearchAddressModel>();
     }
 

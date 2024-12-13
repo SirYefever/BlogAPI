@@ -21,31 +21,18 @@ public class UserService : IUserService
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
     }
-    // Service is a middle layer between controller and repository. it's supposed to manage console logging,
-    // validation(that's not related to DB(whatever that means)) TODO: delete this comment
-
 
     public async Task<User> GetUserById(Guid userId)
     {
-        var user = await _userRepository.GetById(userId);
-        return user;
+        return await _userRepository.GetById(userId);
     }
 
-    public async Task<User> CreateUser(User user)// Todo: figure out weather this needs to return user or token
+    public async Task<User> CreateUser(User user)
     {
-        // Console logging is supposed to be here
         var token = _jwtProvider.GenerateToken(user);
         user.Token = token;
         user.CreateTime = DateTime.UtcNow;
-        //TODO: figure out how to handle exception form userRepository
-        try
-        {
-            await _userRepository.GetByEmail(user.Email);
-        }
-        catch(NullReferenceException)//TODO: figure out how to handle this case (maybe change the way UserRepository behaves)
-        {
-            await _userRepository.Add(user);
-        }
+        await _userRepository.Add(user);
 
         return user;
     }
@@ -59,15 +46,12 @@ public class UserService : IUserService
     {
         throw new NotImplementedException();
     }
-    //TODO: Is there supposed to be async here?
+    
     public async Task<string> Login(string email, string password)
-    {//TODO: figure out weather this is the place where all this logic is supposed to be in.
+    {
         var user = await _userRepository.GetByEmail(email);
-        var authenticationAllowed = _passwordHasher.Verify(password, user.HashedPassword);
-        if (!authenticationAllowed)
-        {
-            throw new Exception("Failed to login");//TODO: figure out how to handle this case properly
-        }
+        
+        _passwordHasher.ConfirmLogging(password, user.HashedPassword);
 
         var token = _jwtProvider.GenerateToken(user);
         var newUserData = user;

@@ -32,18 +32,15 @@ public class UserController: ControllerBase
     [SwaggerOperation("Register new user")]
     [HttpPost("api/account/register")]
     [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(TokenResponse))]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> Register([FromBody]UserRegisterModel userRegisterModel)
     {
-        //Call service, do mapping, return
         var user = _userConverters.UserRegisterModelToUser(userRegisterModel); 
         
         if (!ModelState.IsValid)
-        {
             return BadRequest(ModelState);
-        }
         
         user = await _userService.CreateUser(user);
         TokenResponse tokenResponse = new TokenResponse(user.Token);
@@ -55,19 +52,21 @@ public class UserController: ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(PostPagesListDto))]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     [HttpPost("api/account/login")]
     public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginCredentials creds)
     {
-        //console logging should be here
         var token = await _userService.Login(creds.Email, creds.Password);
         TokenResponse tokenResponse = new TokenResponse(token);
         return tokenResponse;
     }
 
     [SwaggerOperation("Log out system user")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(Response))]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     [HttpPost("api/account/logout")]
     public async Task<IActionResult> Logout()
     {
@@ -78,9 +77,9 @@ public class UserController: ControllerBase
     }
     
     [SwaggerOperation("Get user profile")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(UserDto))]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     [HttpGet("api/account/profile")]
     public async Task<IActionResult> GetProfile()
     {
@@ -92,17 +91,16 @@ public class UserController: ControllerBase
     }
     
     [SwaggerOperation("Edit user profile")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success")]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     [HttpPut("api/account/profile")]
     public async Task<IActionResult> EditProfile(UserEditModel dto)
     {
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         var userToUpdate = await _userService.GetUserById(curUserId);
-        UserConverters.UserEditDtoToUser(userToUpdate, dto);
         await _userService.UpdateUser(curUserId, userToUpdate);
         return Ok();
     }

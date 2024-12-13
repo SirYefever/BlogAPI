@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using BCrypt.Net;
 using Application.Auth;
+using Infrastructure.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure;
@@ -19,5 +20,11 @@ public class PasswordHasher : IPasswordHasher
             text: password,
             hash: hashedPassword
             );
+    }
+
+    public void ConfirmLogging(string password, string hashedPassword)
+    {
+        if (!Verify(password, hashedPassword))
+            throw new BadRequestException("Failed to login.");
     }
 }

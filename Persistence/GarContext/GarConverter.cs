@@ -89,21 +89,27 @@ public class GarConverter
         return model;
     }
 
-    // public async Task<SearchAddressModel> AsAdmHierarchyToSearchAddressModel(AsAdmHierarchy obj, IGarRepository garRepository)
-    // {
-    //     var model = new SearchAddressModel();
-    //     model.ObjectId = (long)obj.Objectid;
-    //     try
-    //     {
-    //         var searchedHouse = await garRepository.GetPresentHouseByIdAsync((long)obj.Objectid);
-    //         model = AsHousesToSearchAddressModel(searchedHouse);
-    //     }
-    //     catch
-    //     {
-    //         var searchedAddressObject = await garRepository.GetPresentAddressObjByIdAsync((long)obj.Objectid);
-    //         model = AsAddrObjToSearchAddressModel(searchedAddressObject);
-    //     }
-    //
-    //     return model;
-    // }
+    public AsAddrObj GetTomskCity()
+    {
+        var result = new AsAddrObj();
+        result.Id = 1580987;
+        result.Objectid = 1281284;
+        result.Objectguid = Guid.Parse("e3b0eae8-a4ce-4779-ae04-5c0797de66be");
+        result.Name = "Томск";
+        result.Typename = "г";
+        result.Level = "5";
+        return result;
+    }
+    
+    public AsAddrObj GetTomskRegion()
+    {
+        var result = new AsAddrObj();
+        result.Id = 1580971;
+        result.Objectid = 1281271;
+        result.Objectguid = Guid.Parse("889b1f3a-98aa-40fc-9d3d-0f41192758ab");
+        result.Name = "Томская";
+        result.Typename = "обл";
+        result.Level = "1";
+        return result;
+    }
 }
