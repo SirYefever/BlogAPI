@@ -39,8 +39,7 @@ public class TagService: ITagService
 
     public async Task<List<Tag>> GetAllTags()
     {
-        var tags = await _tagRepository.GetAll();
-        return tags;
+        return await _tagRepository.GetAll();
     }
 
     public async Task<Tag> ProcessTag(string name)

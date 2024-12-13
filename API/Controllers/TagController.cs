@@ -1,4 +1,5 @@
 using API.Dto;
+using Core.Models;
 using Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,8 @@ public class TagController: ControllerBase
     [SwaggerOperation("Get tag list")]
     [HttpGet("api/tag")]
     [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(List<TagDto>))]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> GetTagsAsync()
     {
         var tags = await _tagService.GetAllTags();
