@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using API;
 using API.Controllers;
@@ -120,6 +121,9 @@ builder.Services.AddSwaggerGen(options =>
             new string[] {}
         }
     });
+    var xmlFile = "PowerBiApiService.xml";
+    var xmlPath = "E:/dev/BlogAPI/API/bin/Debug/netcoreapp1.1/" + xmlFile;
+    options.IncludeXmlComments(xmlPath);
 });
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtSettings"));
 var jwtOptions = builder.Configuration.GetSection("JwtSettings").Get<JwtOptions>();
@@ -141,5 +145,4 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();//TODO: figure out what is this
-app.MapGet("/", () => "Hello World!");
 app.Run();

@@ -38,12 +38,16 @@ public class ExceptionHandlingMiddleware
         switch(exception)
         {
             case KeyNotFoundException:
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
                 break;
             case UnauthorizedAccessException:
-                statusCode = HttpStatusCode.Unauthorized.ToString();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 break;
             case ForbiddenException:
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                break;
+            case BadRequestException:
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 break;
         }
         message = exception.Message;

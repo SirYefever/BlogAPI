@@ -19,22 +19,21 @@ public class PostLikeRepository: IPostLikeRepository
     }
     public async Task AddAsync(PostLike postLike)
     {
+        if (!await _context.Posts.AnyAsync(x => x.Id == postLike.PostId)) 
+            throw new KeyNotFoundException("Post id=" + postLike.PostId + " not found in database.");
+        
         _context.PostLike.Add(postLike);
         await _context.SaveChangesAsync();
     }
 
-    public Task DeleteAsync(Guid postId, Guid userId)
+    public async Task DeleteAsync(Guid postId, Guid userId)
     {
-        var postLike = _context.PostLike.Find(postId, userId);
-        if (postLike != null)
-        {
-            _context.PostLike.Remove(postLike);
-            return _context.SaveChangesAsync();
-        }
-        else
-        {
-            throw new ArgumentException("Such like was not found.");
-        }
+        var postLike = await _context.PostLike.FirstOrDefaultAsync(x=> x.PostId == postId && x.UserWhoLikedId == userId);
+        if (postLike == null)
+            throw new KeyNotFoundException("There is no like for this post by user.");
+        
+        _context.PostLike.Remove(postLike);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<int> GetLikeCountByPostIdAsync(Guid postId)

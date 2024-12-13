@@ -34,14 +34,16 @@ public class PostController : ControllerBase
 
     [SwaggerOperation("Get a list of available posts")]
     [HttpGet("api/post")]
-    // [GetPosts]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetPostList([FromQuery]PostListRequest request)//TODO: figure out why Tags are displayed differently in swagger.
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(PostPagesListDto))]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
+    
+    public async Task<IActionResult> GetPostList([FromQuery]List<Guid>? tags, string? author, int? min, int? max,
+    PostSorting? sorting, bool onlyMyCommunities, int? page, int? size)//TODO: figure out why Tags are displayed differently in swagger.
     {
+        var request = new PostListRequest(tags, author, min, max, sorting, onlyMyCommunities, page, size);
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         var posts = await _postService.GetAvailabePosts(request, curUserId);
@@ -50,32 +52,35 @@ public class PostController : ControllerBase
 
     [SwaggerOperation("Create a personal user post")]
     [HttpPost("api/post")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(Guid))]
+    [SwaggerResponse(statusCode:400, description: "BadRequest")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
     {
         var post = PostConverters.CreatePostDtoToPost(createPostDto, Guid.Empty);
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         post.AuthorId = curUserId;
-        await _postService.CreatePost(post);
+        post.Author = HttpContext.User.Identity.Name;
+        await _postService.CreatePersonal(post, createPostDto.Tags);
         return Ok(post.Id);
     }
     
     [SwaggerOperation("Get information about concrete post")]
     [HttpGet("api/post/{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(PostFullDto))]
+    [SwaggerResponse(statusCode:403, description: "Forbidden")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> GetInformationByIdAsync(Guid id)
     {
-        var post = await _postService.GetPostById(id);
-        var postDto = await _postConverters.PostToPostDto(post);
-        return Ok(postDto);
+        var userId = Guid.Empty;
+        Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        var post = await _postService.GetPostById(id, userId);
+        var postFullDto = await _postConverters.PostToPostFullDto(post);
+        return Ok(postFullDto);
     }
 
     [SwaggerOperation("Add like to concrete post")]
@@ -84,6 +89,10 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode:200, description: "Success")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> LikePost(Guid postId)
     {
         var userId = Guid.Empty;
@@ -95,10 +104,10 @@ public class PostController : ControllerBase
     
     [SwaggerOperation("Delete like to concrete post")]
     [HttpDelete("api/post/{postId}/like")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, description: "Success")]
+    [SwaggerResponse(statusCode:401, description: "Unauthorized")]
+    [SwaggerResponse(statusCode:404, description: "Not Found")]
+    [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> RemoveLikeFromPost(Guid postId)
     {
         var userId = Guid.Empty;

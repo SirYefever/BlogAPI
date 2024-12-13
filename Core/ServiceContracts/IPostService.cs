@@ -5,9 +5,11 @@ namespace Core.ServiceContracts;
 
 public interface IPostService
 {
-    public Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId);
-    public Task<Post> CreatePost(Post post);
-    public Task<Post> GetPostById(Guid id);
-    public Task LikePost(Guid postId, Guid userId);
-    public Task UnlikePost(Guid postId, Guid userId);//TODO: figure out weather we need UserId for thi
+    Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId);
+    Task<Post> CreatePost(Post post, List<Guid> tagGuids);
+    Task CreatePersonal(Post post, List<Guid> tagGuids);
+    Task<Post> GetPostById(Guid id, Guid userId);
+    Task LikePost(Guid postId, Guid userId);
+    Task UnlikePost(Guid postId, Guid userId);//TODO: figure out weather we need UserId for thi
+    Task ParseTags(string text);
 }

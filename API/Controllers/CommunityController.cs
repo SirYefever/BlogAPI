@@ -66,12 +66,11 @@ public class CommunityController: ControllerBase
     [SwaggerResponse(statusCode: 200, description: "Success", Type = typeof(CommunityFullDto))]
     [SwaggerResponse(statusCode:404, description: "Not Found")]
     [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
-    public async Task<IActionResult> GetCommunityInfoById(
-        [Description("Unique identifier of the community")]
-        Guid id)
+    public async Task<IActionResult> GetCommunityInfoById(Guid id)
     {
         var communityFullDto =
             CommunityConverters.CommunityToCommunityFullDto(await _communityService.GetCommunityById(id));
+        
         communityFullDto.SubscribersCount = await _communityService.GetSubscriberCountByCommunityId(id);
         return Ok(communityFullDto);
     }
@@ -85,15 +84,8 @@ public class CommunityController: ControllerBase
     [SwaggerResponse(statusCode:403, description: "Forbidden")]
     [SwaggerResponse(statusCode:404, description: "Not Found")]
     [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
-    public async Task<IActionResult> GetPostsOfCommunity(Guid id,
-        [Description("tag list to filter by tags")]
-        [FromQuery]List<Guid>? tags,
-        [Description("option to sort posts")]
-        PostSorting? sorting,
-        [Description("page number")]
-        int? page = 1,
-        [Description("required number of elements per page")]
-        int? size = 5)
+    public async Task<IActionResult> GetPostsOfCommunity(Guid id, [FromQuery]List<Guid>? tags, PostSorting? sorting,
+        int? page = 1, int? size = 5)
     {
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
@@ -127,18 +119,14 @@ public class CommunityController: ControllerBase
     [SwaggerResponse(statusCode:403, description: "Forbidden")]
     [SwaggerResponse(statusCode:404, description: "Not Found")]
     [SwaggerResponse(statusCode:500, description: "Internal Server Error", Type = typeof(Response))]
-    public async Task<IActionResult> CreatePost(
-        [Description("Unique identifier of the community")]
-        Guid id,
-        [Description("Model of the new post")]
-        [FromBody] CreatePostDto createPostDto)
+    public async Task<IActionResult> CreatePost(Guid id, [FromBody] CreatePostDto createPostDto)
     {
         var post = PostConverters.CreatePostDtoToPost(createPostDto, id);
         post.Author = HttpContext.User.Identity.Name;
         var curUserId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out curUserId);
         post.AuthorId = curUserId;
-        await _postService.CreatePost(post);
+        await _postService.CreatePost(post, createPostDto.Tags);
         return Ok(post.Id);
     }
     

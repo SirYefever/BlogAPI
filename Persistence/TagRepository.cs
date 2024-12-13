@@ -12,14 +12,13 @@ public class TagRepository: ITagRepository
         _context = context;
     }
     
-    public async Task<Tag> Add(Tag tag)
+    public async Task Add(Tag tag)
     {
-        _context.Tags.FirstOrDefaultAsync(c => c.Name == tag.Name);
-        if (tag != null)
-            throw new ArgumentException($"Tag {tag.Name} already exists");
+        if (await _context.Tags.AnyAsync(x => x.Name == tag.Name))
+            return;
+            
         _context.Tags.Add(tag);
         await _context.SaveChangesAsync();
-        return tag;
     }
 
     public async Task<Tag> GetById(Guid id)
@@ -42,5 +41,11 @@ public class TagRepository: ITagRepository
     public async Task<List<Tag>> GetAll()
     {
         return await _context.Tags.ToListAsync();
+    }
+
+    public async Task ConfirmTagExists(Guid id)
+    {
+        if (!await _context.Tags.AnyAsync(x => x.Id == id))
+            throw new KeyNotFoundException("Tag id=" + id + " not found in database.");
     }
 }

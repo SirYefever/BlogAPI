@@ -27,17 +27,15 @@ public class CommentRepository: ICommentRepository
             throw new KeyNotFoundException("Post with id=" + postId.ToString() + " not found in database");
 
         var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == postId);
+        post.CommentsCount++;
         if (post == null)
-        {
             throw new KeyNotFoundException("Post with id=" + postId.ToString() + " not found in database");
-        }
 
         var community = await _context.Communities.FirstOrDefaultAsync(x => x.Id == post.CommunityId);
-        if (!await _context.UserCommunity.AnyAsync(x =>
-                x.CommunityId == post.CommunityId && x.UserId == comment.AuthorId && community.IsClosed))
-        {
-            throw new ForbiddenException("Access to closed community post with id=" + post.Id + " is forbidden for user id=" + comment.AuthorId);
-        }
+        if (community != null)
+            if (!await _context.UserCommunity.AnyAsync(x =>
+                    x.CommunityId == post.CommunityId && x.UserId == comment.AuthorId && community.IsClosed))
+                throw new ForbiddenException("Access to closed community post with id=" + post.Id + " is forbidden for user id=" + comment.AuthorId);
 
         await _context.Comment.AddAsync(comment);
         await _context.SaveChangesAsync();
@@ -95,6 +93,8 @@ public class CommentRepository: ICommentRepository
         if (comment.AuthorId != userId)
             throw new ForbiddenException("The user with id=" + userId + " is not the author of the comment");
         
+        var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == comment.postId);
+        post.CommentsCount--;
         comment.Content = "";
         comment.ModifiedDate = DateTime.UtcNow;
         comment.DeleteDate = DateTime.UtcNow;

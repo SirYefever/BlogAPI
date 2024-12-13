@@ -24,19 +24,19 @@ public class GarRepository: IGarRepository
     //TODO: manage awaiting in these 4 functions
     public async Task<AsAddrObj> GetAddressObjByGuidAsync(Guid objectGuid)
     {
-        try
-        {
-            var addresses = _context.AsAddrObj.AsQueryable();
-            AsAddrObj searchedAddress = addresses.Where(
-                a => a.Objectguid == objectGuid
-            ).ToList()[0]; //TODO: manage UTC thing
-            return searchedAddress;
-        }
-        catch
-        {
-            return null;
-        }
-
+        var addresses = _context.AsAddrObj.AsQueryable();
+        AsAddrObj searchedAddress = addresses.Where(
+            a => a.Objectguid == objectGuid
+        ).ToList()[0]; //TODO: manage UTC thing
+        
+        if (searchedAddress == null)
+            throw new KeyNotFoundException("Address with id=" + objectGuid.ToString() + "not found in database.");
+            
+        return searchedAddress;
+        // catch
+        // {
+        //     return null;
+        // }
     }
     
     public async Task<AsAddrObj> GetAddressObjByIdAsync(long objectId)
@@ -207,5 +207,23 @@ public class GarRepository: IGarRepository
                 searchedItemsConverted.Add(await GetObject((long)searchedItems[i].Objectid));
         }
         return searchedItemsConverted;
+    }
+
+    public async Task<bool> IsAddressGuidReal(Guid objectGuid)
+    {
+        var houses = _context.AsHouses.AsQueryable();
+        List<AsHouses> houseList = await houses.Where(
+            a => a.Objectguid == objectGuid 
+        ).ToListAsync(); //TODO: manage UTC thing
+        if (!houseList.Any())
+            return false;
+        
+        return true;
+    }
+
+    public async Task ConfirmAddressIsReal(Guid objectGuid)
+    {
+        if (!await IsAddressGuidReal(objectGuid))
+            throw new KeyNotFoundException("Address not found");
     }
 }

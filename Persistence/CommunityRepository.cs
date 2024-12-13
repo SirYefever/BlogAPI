@@ -43,7 +43,7 @@ public class CommunityRepository: ICommunityRepository
     {
         var community = await _context.Communities.FirstOrDefaultAsync(x => x.Id == request.CommunityId);
         
-        if (community.IsClosed && await _context.UserCommunity.AnyAsync(x => x.CommunityId == community.Id && x.UserId == userId))
+        if (community.IsClosed && !await _context.UserCommunity.AnyAsync(x => x.CommunityId == community.Id && x.UserId == userId))
             throw new ForbiddenException("User id=" + userId.ToString() + "does not belong to closed community id=" + community.Id.ToString());
         
         if (community == null)

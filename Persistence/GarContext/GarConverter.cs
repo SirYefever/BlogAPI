@@ -28,7 +28,7 @@ public class GarConverter
         _levels.Add(GarAddressLevel.IntracityLevel, "Уровень внутригородской территории (устаревшее)");
         //In task's swagger AdditionalTerritoriesLevel are mapped to "Элемент планировочной структуры" which is №7
         _levels.Add(GarAddressLevel.AdditionalTerritoriesLevel, "Уровень дополнительных территорий (устаревшее)");
-        _levels.Add(GarAddressLevel.LevelOfObjectsInAdditionalTerritories, "Уровень объектов на дополнительных территориях (устаревшее)");//15
+        _levels.Add(GarAddressLevel.LevelOfObjectsInAdditionalTerritories, "Уровень объектов на дополнительных территориях (устаревшее)");
         _levels.Add(GarAddressLevel.CarPlace, "Машиноместо");
     }
 
@@ -36,9 +36,8 @@ public class GarConverter
     {
         string result = "";
         if (obj.Typename != null)
-        {
             result += obj.Typename + " ";
-        }
+        
         result += obj.Name;
         return result;
     }
@@ -49,12 +48,15 @@ public class GarConverter
         if (house.Housenum != null)
             result = house.Housenum;
 
-        if (house.Addnum1 != null)
-            result += " стр." + house.Addnum1;
-
         if (house.Addnum2 != null)
+            result += " к. " + house.Addnum2;
+        
+        if (house.Addnum1 != null)
         {
-            result += house.Addnum2;
+            if (house.Addnum1 == "3")
+                result += " соор. " + house.Addnum1;
+            else
+                result += " стр. " + house.Addnum1;
         }
 
         return result;

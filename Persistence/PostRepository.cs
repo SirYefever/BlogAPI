@@ -4,7 +4,9 @@ using Azure.Core;
 using Core.InterfaceContracts;
 using Core.Models;
 using Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Persistence.GarContext;
 
 namespace Persistence;
 
@@ -26,22 +28,38 @@ public class PostRepository: IPostRepository
         return post;
     }
 
-    public async Task<Post> GetById(Guid id)
+    public async Task AddPersonal(Post post)
     {
-        var post = await _context.Posts.FirstAsync(post => post.Id == id);
+        _context.Posts.Add(post);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<Post> GetById(Guid id, Guid userId)
+    {
+        var post = await _context.Posts.FirstOrDefaultAsync(post => post.Id == id);
+        if (post == null)
+            throw new KeyNotFoundException("Post id=" + id + " not found in database.");
+
+        if (post.CommunityId != null)
+        {
+            var community = await _context.Communities.FirstOrDefaultAsync(x => x.Id == post.CommunityId);
+            if (community == null)
+                throw new KeyNotFoundException("Community id=" + post.CommunityId + " does not exist in database anymore.");
+            if (community.IsClosed && !await _context.UserCommunity.AnyAsync(x => x.CommunityId == community.Id && x.UserId == userId))
+                throw new ForbiddenException("User id=" + userId.ToString() + "does not belong to closed community id=" + community.Id.ToString());
+        }
+        
         return post;
     }
-    
 
     public async Task<List<Post>> GetAvailabePosts(PostListRequest request, Guid userId, List<PostLike> postLikes,
         List<UserCommunity> curUserCommunities = null)
     {//TODO: figure out why nothing is awaitable here
         
         var posts = _context.Posts.AsQueryable();
+
         
         if (request.OnlyMyCommunities)
         {
-            // check weather each post.communityId is contained in cuUserCommunities
             var availableCommunities = curUserCommunities.Select(uc => uc.CommunityId).ToList();
             posts = posts.Where(p => p.CommunityId != null && availableCommunities.Contains((Guid)p.CommunityId));
         }
@@ -80,6 +98,14 @@ public class PostRepository: IPostRepository
                 posts = posts.OrderBy(keySelector);
             }
         }
+        
+        if (request.Tags != null && request.Tags.Any())
+        {
+            var postTags = _context.PostTag.AsQueryable();
+            var postTagsFiltered = postTags.Where(pt => request.Tags.Contains(pt.TagId));
+            var availablePostIds = postTagsFiltered.Select(pt => pt.PostId);
+            posts = posts.Where(p => availablePostIds.Contains(p.Id));
+        }
 
         if (request.PageSize.HasValue)
         {
@@ -91,7 +117,7 @@ public class PostRepository: IPostRepository
             posts = posts.Skip((int)(request.PageSize.Value * (request.Page.Value - 1)));
         }
 
-        return posts.ToList();//Don't we need ToListAsync() here?
+        return await posts.ToListAsync();
     }
     
     
