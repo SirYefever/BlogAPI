@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     public async Task<User> Add(User user)
     {
         if (await _context.Users.AnyAsync(item => item.Email == user.Email))
-            throw new BadRequestException("Username" + user.Email + " is already taken.");
+            throw new BadRequestException("Username " + user.Email + " is already taken.");
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
