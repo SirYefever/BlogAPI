@@ -19,9 +19,4 @@ public class PostTagService : IPostTagService
         await _postTagRepository.CreateAsync(postTag);
         return postTag;
     }
-
-    public Task<PostTag> RemoveTagFromPost(Post post, Tag tag)
-    {
-        throw new NotImplementedException();
-    }
 }

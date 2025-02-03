@@ -27,16 +27,6 @@ public class PostTagRepository : IPostTagRepository
         return await postTags.ToListAsync();
     }
 
-    public Task<PostTag> GetTagsOfPost(Guid postId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<PostTag> GetPostsByTagId(Guid tagId)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task ConfirmTagExists(Guid id)
     {
         if (!await _context.Tags.AnyAsync(x => x.Id == id))

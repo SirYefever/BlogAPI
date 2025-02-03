@@ -21,7 +21,8 @@ public class CommunityController : ControllerBase
     private readonly UserConverters _userConverters;
 
     public CommunityController(ICommunityService communityService, IUserCommunityService userCommunityService,
-        IPostService postService, PostConverters postConverters, UserCommunityConverters userCommunityConverters, UserConverters userConverters)
+        IPostService postService, PostConverters postConverters, UserCommunityConverters userCommunityConverters,
+        UserConverters userConverters)
     {
         _communityService = communityService;
         _userCommunityService = userCommunityService;
@@ -65,7 +66,8 @@ public class CommunityController : ControllerBase
     [SwaggerResponse(500, "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> GetCommunityInfoById(Guid id)
     {
-        var adminDtos = (await _communityService.GetCommunityAdmins(id)).Select(admin => UserConverters.UserToUserDto(admin)).ToList();
+        var adminDtos = (await _communityService.GetCommunityAdmins(id))
+            .Select(admin => UserConverters.UserToUserDto(admin)).ToList();
         var communityFullDto =
             CommunityConverters.CommunityToCommunityFullDto(await _communityService.GetCommunityById(id),
                 adminDtos);

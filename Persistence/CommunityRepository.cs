@@ -81,7 +81,7 @@ public class CommunityRepository : ICommunityRepository
 
         if (request.Page.HasValue)
             posts = posts.Skip(request.PageSize.Value * (request.Page.Value - 1));
-        
+
         if (request.PageSize.HasValue)
             posts = posts.Take(request.PageSize.Value);
 

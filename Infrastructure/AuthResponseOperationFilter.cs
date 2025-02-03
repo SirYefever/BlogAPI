@@ -11,7 +11,7 @@ public class AuthResponsesOperationFilter : IOperationFilter
         var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
             .Union(context.MethodInfo.GetCustomAttributes(true))
             .OfType<AuthorizeAttribute>();
-        
+
         var allowAnonymous = context.MethodInfo.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Any();
 
         if (authAttributes.Any())

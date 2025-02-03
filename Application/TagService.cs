@@ -13,11 +13,6 @@ public class TagService : ITagService
         _tagRepository = tagRepository;
     }
 
-    public Task<Tag> GetTagByName(string name)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<Tag> GetTagById(Guid id)
     {
         var tag = await _tagRepository.GetById(id);

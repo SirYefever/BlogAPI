@@ -30,11 +30,6 @@ public class CommentService : ICommentService
         await _commentRepository.DeleteAsync(commentId, userId);
     }
 
-    public Task<Comment> GetCommentAsync(Guid commentId)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<List<Comment>> GetReplies(Guid commentId)
     {
         var replies = await _commentRepository.GetRepliesByIdAsync(commentId);

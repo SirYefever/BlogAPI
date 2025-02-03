@@ -9,14 +9,12 @@ public class UserService : IUserService
 {
     private readonly IJwtProvider _jwtProvider;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly ITokenGenerator _tokenGenerator;
     private readonly IUserRepository _userRepository;
 
     public UserService(IUserRepository userRepository, ITokenGenerator tokenGenerator, IPasswordHasher passwordHasher,
         IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
-        _tokenGenerator = tokenGenerator;
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
     }
@@ -39,11 +37,6 @@ public class UserService : IUserService
     public async Task UpdateUser(Guid userToBeUpdatedId, User updatedUser)
     {
         await _userRepository.Update(userToBeUpdatedId, updatedUser);
-    }
-
-    public Task<User> DeleteUser(User user)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<string> Login(string email, string password)

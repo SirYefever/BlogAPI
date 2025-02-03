@@ -18,14 +18,4 @@ public class CommunityPostRepository : ICommunityPostRepository
         await _context.SaveChangesAsync();
         return communityPost;
     }
-
-    public Task<CommunityPost> GetByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteAsync(Guid communityId, Guid postId)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -24,10 +24,6 @@ public class UserCommunityRepository : IUserCommunityRepository
         return userCommunity;
     }
 
-    public Task<List<Community>> GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<List<UserCommunity>> GetUserCommunitiesByUserIdAsync(Guid userId)
     {

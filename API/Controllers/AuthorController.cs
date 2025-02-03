@@ -28,7 +28,7 @@ public class AuthorController : ControllerBase
     [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAuthors()
     {
-        List<Author> authors = new List<Author>();
+        List<Author> authors = new();
         authors = await _authorService.GetAllAsync();
 
         var authorDtos = new List<AuthorDto>();

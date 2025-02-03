@@ -34,7 +34,7 @@ public class CommunityService : ICommunityService
 
     public async Task<List<User>> GetCommunityAdmins(Guid communityId)
     {
-        List<UserCommunity> userCommunityList = await _userCommunityRepository.GetCommunityAdmins(communityId);
+        var userCommunityList = await _userCommunityRepository.GetCommunityAdmins(communityId);
         var adminsNotAwaited = userCommunityList.Select(uc => _userRepository.GetById(uc.UserId));
         List<User> result = (await Task.WhenAll(adminsNotAwaited)).ToList();
         return result;
