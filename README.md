@@ -1,1 +1,1 @@
-Backend API for blog system educational project on ASP.NET
+**Backend API** for blog system educational project written using **ASP.NET Core**.
