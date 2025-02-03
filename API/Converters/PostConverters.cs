@@ -80,6 +80,7 @@ public class PostConverters
         post.Image = dto.Image;
         post.AdressId = dto.AddressId;
         post.CommunityId = communityId;
+        post.CreateTime = DateTime.UtcNow;
         return post;
     }
 

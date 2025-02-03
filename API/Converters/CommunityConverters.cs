@@ -26,7 +26,7 @@ public class CommunityConverters
         return communityDto;
     }
 
-    public static CommunityFullDto CommunityToCommunityFullDto(Community community)
+    public static CommunityFullDto CommunityToCommunityFullDto(Community community, List<UserDto> adminDtos)
     {
         var dto = new CommunityFullDto();
         dto.Id = community.Id;
@@ -34,6 +34,7 @@ public class CommunityConverters
         dto.Description = community.Description;
         dto.IsClosed = community.IsClosed;
         // dto.SubscribersCount = community.SubscribersCount;
+        dto.Administrators = adminDtos;
         return dto;
     }
 }

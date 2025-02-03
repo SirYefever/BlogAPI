@@ -74,6 +74,14 @@ public class UserCommunityRepository : IUserCommunityRepository
         return userCommunity.HighestRole;
     }
 
+    public async Task<List<UserCommunity>> GetCommunityAdmins(Guid communityId)
+    {
+        var communityAdminsList = await _context.UserCommunity
+            .Where(uc => uc.HighestRole == CommunityRole.Administrator && uc.CommunityId == communityId)
+            .ToListAsync();
+        return communityAdminsList;
+    }
+
     public async Task ConfirmUserBelongsToClosedCommunity(Guid communityId, Guid userId)
     {
         var community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == communityId);

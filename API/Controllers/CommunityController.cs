@@ -18,14 +18,16 @@ public class CommunityController : ControllerBase
     private readonly PostConverters _postConverters;
     private readonly IPostService _postService;
     private readonly IUserCommunityService _userCommunityService;
+    private readonly UserConverters _userConverters;
 
     public CommunityController(ICommunityService communityService, IUserCommunityService userCommunityService,
-        IPostService postService, PostConverters postConverters)
+        IPostService postService, PostConverters postConverters, UserCommunityConverters userCommunityConverters, UserConverters userConverters)
     {
         _communityService = communityService;
         _userCommunityService = userCommunityService;
         _postService = postService;
         _postConverters = postConverters;
+        _userConverters = userConverters;
     }
 
     [SwaggerOperation("Get community list")]
@@ -63,8 +65,10 @@ public class CommunityController : ControllerBase
     [SwaggerResponse(500, "Internal Server Error", Type = typeof(Response))]
     public async Task<IActionResult> GetCommunityInfoById(Guid id)
     {
+        var adminDtos = (await _communityService.GetCommunityAdmins(id)).Select(admin => UserConverters.UserToUserDto(admin)).ToList();
         var communityFullDto =
-            CommunityConverters.CommunityToCommunityFullDto(await _communityService.GetCommunityById(id));
+            CommunityConverters.CommunityToCommunityFullDto(await _communityService.GetCommunityById(id),
+                adminDtos);
 
         communityFullDto.SubscribersCount = await _communityService.GetSubscriberCountByCommunityId(id);
         return Ok(communityFullDto);
@@ -153,7 +157,7 @@ public class CommunityController : ControllerBase
     {
         var userId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
-        await _userCommunityService.AddUserToTheCommunity(userId, id, CommunityRole.Subscriber);
+        await _userCommunityService.AddUserToTheCommunity(id, userId, CommunityRole.Subscriber);
         return Ok();
     }
 
@@ -168,7 +172,7 @@ public class CommunityController : ControllerBase
     {
         var userId = Guid.Empty;
         Guid.TryParse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
-        await _userCommunityService.UnsubscribeUserToCommunityAsync(userId, id);
+        await _userCommunityService.UnsubscribeUserToCommunityAsync(id, userId);
         return Ok();
     }
 
