@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using API;
 using API.Controllers;
 using API.Converters;
-using API.Filters;
 using Application;
 using Application.Auth;
 using Core.InterfaceContracts;
@@ -49,7 +48,6 @@ var configuration = new ConfigurationBuilder()
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<GetPosts>();
 builder.Services.AddTransient<CustomJwtBearerHandler>();
 builder.Services.AddTransient<ITokenGenerator, TokenService>();
 builder.Services.AddTransient<IJwtProvider, JwtProvider>();
